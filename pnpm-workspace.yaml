@@ -1,0 +1,4 @@
+allowBuilds:
+  # esbuild and workerd (Cloudflare's local runtime) download their platform binary on install.
+  esbuild: true
+  workerd: true

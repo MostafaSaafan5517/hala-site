@@ -1,0 +1,70 @@
+---
+import { getCollection, render } from "astro:content";
+import Brand from "../../components/Brand.astro";
+import { site } from "../../config/site";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBrand } from "../../i18n/brand";
+import { localeOfEntry, locales } from "../../i18n/locales";
+import { ui } from "../../i18n/ui";
+
+export async function getStaticPaths() {
+  const homes = await getCollection("pages", (entry) => entry.id.endsWith("/home"));
+  return locales.map((locale) => {
+    const entry = homes.find((home) => localeOfEntry(home.id) === locale);
+    if (!entry) {
+      throw new Error(
+        `The home page has no ${locale} version: add src/content/pages/${locale}/home.mdx.`,
+      );
+    }
+    return { params: { lang: locale }, props: { entry } };
+  });
+}
+
+const { entry } = Astro.props;
+const locale = localeOfEntry(entry.id);
+const otherLocale = locale === "en" ? "ar" : "en";
+const words = ui[locale];
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  locale={locale}
+  title={withBrand(entry.data.title, locale)}
+  description={withBrand(entry.data.description, locale)}
+>
+  <main class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <div class="space-y-5 text-lg leading-relaxed [&_h1]:text-3xl [&_h1]:leading-snug [&_h1]:font-semibold">
+      <Content components={{ Brand }} />
+    </div>
+    <p class="mt-8 flex flex-wrap gap-3">
+      <a
+        class="rounded-lg bg-teal-800 px-4 py-2.5 font-medium text-white hover:bg-teal-900"
+        href={site.demoUrl}
+      >
+        {words.tryDemo}
+      </a>
+      <a class="rounded-lg px-4 py-2.5 font-medium text-teal-900 underline" href={site.githubUrl}>
+        {words.readCode}
+      </a>
+    </p>
+  </main>
+  <footer class="mx-auto max-w-2xl space-y-2 px-4 pb-12 text-sm text-stone-600 sm:px-6">
+    <p>{words.portfolioNote}</p>
+    <p>
+      <a
+        class="underline"
+        href={`/${otherLocale}/`}
+        hreflang={otherLocale}
+        lang={otherLocale}
+        data-locale={otherLocale}
+      >
+        {words.otherLanguage}
+      </a>
+    </p>
+  </footer>
+  <script>
+    import { rememberLocaleOnClick } from "../../i18n/remember";
+
+    rememberLocaleOnClick();
+  </script>
+</BaseLayout>

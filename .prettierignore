@@ -1,0 +1,8 @@
+dist/
+.astro/
+.wrangler/
+pnpm-lock.yaml
+playwright-report/
+test-results/
+blob-report/
+.lighthouseci/

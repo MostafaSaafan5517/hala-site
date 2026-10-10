@@ -1,0 +1,6 @@
+# The Cloudflare Pages project. `pnpm serve` runs the built site on Cloudflare's own runtime
+# (workerd) with these settings, and CI deploys with them, so local and live behave the same.
+name = "hala-site"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-06"
+send_metrics = false

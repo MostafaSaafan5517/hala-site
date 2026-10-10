@@ -1,0 +1,67 @@
+---
+// The root: the visitor picks a language (never guessed from their address or browser), and a
+// returning visitor goes straight to the one they picked last time.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site";
+import { localeInfo, localeStorageKey, locales } from "../i18n/locales";
+
+const choices = [
+  {
+    locale: "en",
+    label: "Continue in English",
+    intro: "An AI booking assistant for salons, clinics and studios.",
+  },
+  {
+    locale: "ar",
+    label: "تابع بالعربية",
+    intro: "مساعد ذكي لحجز المواعيد في الصالونات والعيادات والاستوديوهات.",
+  },
+] as const satisfies ReadonlyArray<{
+  locale: (typeof locales)[number];
+  label: string;
+  intro: string;
+}>;
+---
+
+<BaseLayout
+  title={`${site.name} | ${site.nameAr}`}
+  description="An AI booking assistant for salons, clinics and studios, in Arabic and English. مساعد ذكي لحجز المواعيد بالعربية والإنجليزية."
+>
+  <script is:inline slot="head" define:vars={{ storageKey: localeStorageKey, known: locales }}>
+    (() => {
+      let saved;
+      try {
+        saved = localStorage.getItem(storageKey);
+      } catch {
+        return; // Storage is blocked: the visitor chooses on this page.
+      }
+      if (known.includes(saved)) location.replace(`/${saved}/`);
+    })();
+  </script>
+  <main class="mx-auto flex min-h-svh max-w-3xl flex-col justify-center gap-10 px-4 py-16 sm:px-6">
+    <h1 class="text-center text-3xl font-semibold">
+      <span>{site.name}</span> <span aria-hidden="true">|</span>{" "}
+      <span lang="ar">{site.nameAr}</span>
+    </h1>
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {choices.map(({ locale, label, intro }) => (
+        <li lang={locale} dir={localeInfo[locale].dir} class="rounded-2xl bg-white p-6 shadow-sm">
+          <p class="text-stone-700">{intro}</p>
+          <a
+            class="mt-4 inline-block rounded-lg bg-teal-800 px-4 py-2.5 font-medium text-white hover:bg-teal-900"
+            href={`/${locale}/`}
+            hreflang={locale}
+            data-locale={locale}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+  <script>
+    import { rememberLocaleOnClick } from "../i18n/remember";
+
+    rememberLocaleOnClick();
+  </script>
+</BaseLayout>

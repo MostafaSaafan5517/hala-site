@@ -1,0 +1,26 @@
+# Build output and generated types
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Local Cloudflare runtime state (`pnpm serve`) and local secrets for Pages Functions
+.wrangler/
+.dev.vars*
+
+# Environment variables (.env.example is the committed template)
+.env
+.env.*
+!.env.example
+
+# Test and audit output
+playwright-report/
+test-results/
+blob-report/
+.lighthouseci/
+
+# Logs and OS files
+*.log
+.DS_Store
+.idea/

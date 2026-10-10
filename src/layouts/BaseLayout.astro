@@ -1,0 +1,29 @@
+---
+import "../styles/global.css";
+import { localeInfo, type Locale } from "../i18n/locales";
+
+interface Props {
+  /** The page's language. Bilingual pages (the root, the 404) are English with their Arabic marked. */
+  locale?: Locale;
+  title: string;
+  description: string;
+}
+
+const { locale = "en", title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang={locale} dir={localeInfo[locale].dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <slot name="head" />
+  </head>
+  <body class="bg-stone-50 text-stone-900 antialiased">
+    <slot />
+  </body>
+</html>

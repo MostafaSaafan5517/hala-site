@@ -1,0 +1,4 @@
+# LF everywhere, on every OS: Prettier checks for it, and CI runs on Linux.
+* text=auto eol=lf
+*.png binary
+*.ico binary
