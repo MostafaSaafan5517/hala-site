@@ -1,0 +1,24 @@
+name: Design tokens
+
+# The site uses Hala's design tokens unchanged. Once a week (and on demand) this checks the copy
+# against Hala's main branch, so a change in the product shows up here as a failed run. It stays
+# out of the main CI, so an unreachable GitHub never fails a deploy.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tokens:
+    name: Tokens match Hala
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+      - run: node scripts/tokens.mjs check

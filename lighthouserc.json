@@ -11,19 +11,44 @@
       "assertions": {
         "categories:performance": [
           "error",
-          { "minScore": 0.95, "aggregationMethod": "median-run" }
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "median-run"
+          }
         ],
         "categories:accessibility": [
           "error",
-          { "minScore": 0.95, "aggregationMethod": "median-run" }
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "median-run"
+          }
         ],
         "categories:best-practices": [
           "error",
-          { "minScore": 0.95, "aggregationMethod": "median-run" }
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "median-run"
+          }
         ],
-        "categories:seo": ["error", { "minScore": 0.95, "aggregationMethod": "median-run" }]
+        "categories:seo": [
+          "error",
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "median-run"
+          }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          {
+            "maxNumericValue": 0,
+            "aggregationMethod": "median-run"
+          }
+        ]
       }
     },
-    "upload": { "target": "filesystem", "outputDir": ".lighthouseci/reports" }
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci/reports"
+    }
   }
 }

@@ -1,1 +1,136 @@
 @import "tailwindcss";
+/* Hala's design tokens, copied unchanged from the product (`pnpm tokens:check` compares them). */
+@import "./tokens.css";
+
+/* dark: utilities follow the tokens' rule: the device's setting, unless the element sits inside
+   .hala-light or .hala-dark (the same rule as in Hala). */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:not(.hala-light, .hala-light *)) {
+      @slot;
+    }
+  }
+  &:where(.hala-dark, .hala-dark *) {
+    @slot;
+  }
+}
+
+/* The same color names as Hala's components use, so markup moves between the two projects
+   unchanged. Note the one trap: `primary` is the solid teal and `accent` the soft one (Hala's
+   docs/design/TOKENS.md has the full table). */
+@theme inline {
+  --color-background: var(--hala-bg);
+  --color-foreground: var(--hala-ink);
+  --color-card: var(--hala-surface);
+  --color-card-foreground: var(--hala-ink);
+  --color-primary: var(--hala-accent);
+  --color-primary-foreground: var(--hala-on-accent);
+  --color-primary-strong: var(--hala-accent-strong);
+  --color-secondary: var(--hala-surface-2);
+  --color-secondary-foreground: var(--hala-ink-2);
+  --color-secondary-strong: var(--hala-surface-3);
+  --color-muted: var(--hala-surface-2);
+  --color-muted-foreground: var(--hala-ink-3);
+  --color-accent: var(--hala-accent-soft);
+  --color-accent-foreground: var(--hala-accent-ink);
+  --color-destructive: var(--hala-danger);
+  --color-destructive-foreground: var(--hala-on-danger);
+  --color-destructive-soft: var(--hala-danger-soft);
+  --color-success: var(--hala-success);
+  --color-success-soft: var(--hala-success-soft);
+  --color-warning: var(--hala-warning-ink);
+  --color-warning-soft: var(--hala-warning-soft);
+  --color-border: var(--hala-line);
+  --color-input: var(--hala-line-input);
+  --color-ring: var(--hala-accent);
+
+  /* Readex Pro sets Latin and Arabic (astro.config.ts loads it as --font-readex). */
+  --font-sans: var(--font-readex), system-ui, sans-serif;
+
+  --radius-control: var(--hala-radius-control);
+  --radius-surface: var(--hala-radius-surface);
+  --radius-panel: var(--hala-radius-panel);
+  --radius-badge: var(--hala-radius-badge);
+
+  --shadow-level-1: var(--hala-shadow-1);
+  --shadow-level-2: var(--hala-shadow-2);
+  --shadow-level-3: var(--hala-shadow-3);
+
+  --ease-hala: var(--hala-ease);
+  /* Hover and press take the short duration and Hala's easing (DESIGN.md, Motion). */
+  --default-transition-duration: var(--hala-duration-fast);
+  --default-transition-timing-function: var(--hala-ease);
+}
+
+/* The type scale as text-display ... text-caption. Not inline, so the utilities read variables
+   that Arabic text can override below. */
+@theme {
+  --text-display: var(--hala-text-display);
+  --text-display--line-height: var(--hala-text-display-line-height);
+  --text-display--font-weight: var(--hala-text-display-weight);
+  --text-display--letter-spacing: var(--hala-text-display-tracking);
+  --text-h1: var(--hala-text-h1);
+  --text-h1--line-height: var(--hala-text-h1-line-height);
+  --text-h1--font-weight: var(--hala-text-h1-weight);
+  --text-h1--letter-spacing: var(--hala-text-h1-tracking);
+  --text-h2: var(--hala-text-h2);
+  --text-h2--line-height: var(--hala-text-h2-line-height);
+  --text-h2--font-weight: var(--hala-text-h2-weight);
+  --text-h2--letter-spacing: var(--hala-text-h2-tracking);
+  --text-h3: var(--hala-text-h3);
+  --text-h3--line-height: var(--hala-text-h3-line-height);
+  --text-h3--font-weight: var(--hala-text-h3-weight);
+  --text-large: var(--hala-text-large);
+  --text-large--line-height: var(--hala-text-large-line-height);
+  --text-body: var(--hala-text-body);
+  --text-body--line-height: var(--hala-text-body-line-height);
+  --text-small: var(--hala-text-small);
+  --text-small--line-height: var(--hala-text-small-line-height);
+  --text-caption: var(--hala-text-caption);
+  --text-caption--line-height: var(--hala-text-caption-line-height);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  /* A visible focus for everything (DESIGN.md, Focus and touch). */
+  :focus-visible {
+    outline: 2px solid var(--hala-accent);
+    outline-offset: 2px;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-body text-foreground;
+  }
+  /* Reduced motion: nothing moves (DESIGN.md, Motion). Components ask with motion-safe:; this
+     catches whatever doesn't, transitions included. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  /* Readex Pro sets both scripts. Arabic keeps the sizes, gets more line height, and is never
+     letter-spaced (spacing breaks its joins). */
+  :lang(ar) {
+    --text-display--line-height: var(--hala-text-display-line-height-arabic);
+    --text-display--letter-spacing: 0;
+    --text-h1--line-height: var(--hala-text-h1-line-height-arabic);
+    --text-h1--letter-spacing: 0;
+    --text-h2--line-height: var(--hala-text-h2-line-height-arabic);
+    --text-h2--letter-spacing: 0;
+    --text-h3--line-height: var(--hala-text-h3-line-height-arabic);
+    --text-large--line-height: var(--hala-text-large-line-height-arabic);
+    --text-body--line-height: var(--hala-text-body-line-height-arabic);
+    --text-small--line-height: var(--hala-text-small-line-height-arabic);
+    --text-caption--line-height: var(--hala-text-caption-line-height-arabic);
+    letter-spacing: 0;
+  }
+}

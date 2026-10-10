@@ -14,18 +14,19 @@ const checks = [
   { path: "/no-such-page/", status: 404, contains: "Page not found" },
 ];
 
+// After a fetch, set exitCode instead of calling process.exit(): exiting while a connection is
+// still closing crashes Node on Windows.
+
 // A deployment can take a few seconds to answer after the upload finishes.
 const deadline = Date.now() + 60_000;
-while ((await fetch(base).catch(() => null))?.status !== 200) {
-  if (Date.now() > deadline) {
-    console.error(`${base} did not answer with 200 within a minute`);
-    process.exit(1);
-  }
-  await new Promise((resolve) => setTimeout(resolve, 3_000));
+let answered = false;
+while (!answered && Date.now() < deadline) {
+  answered = (await fetch(base).catch(() => null))?.status === 200;
+  if (!answered) await new Promise((resolve) => setTimeout(resolve, 3_000));
 }
 
 let failed = 0;
-for (const check of checks) {
+for (const check of answered ? checks : []) {
   const response = await fetch(new URL(check.path, base), { redirect: "manual" });
   const problems = [];
   if (response.status !== check.status) problems.push(`status ${response.status}`);
@@ -40,7 +41,10 @@ for (const check of checks) {
   if (problems.length) failed += 1;
 }
 
-if (failed) {
+if (!answered) {
+  console.error(`${base} did not answer with 200 within a minute`);
+  process.exitCode = 1;
+} else if (failed) {
   console.error(`${failed} check(s) failed on ${base}`);
-  process.exit(1);
+  process.exitCode = 1;
 }

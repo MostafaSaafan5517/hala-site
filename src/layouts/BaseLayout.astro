@@ -1,4 +1,5 @@
 ---
+import { Font } from "astro:assets";
 import "../styles/global.css";
 import { localeInfo, type Locale } from "../i18n/locales";
 
@@ -19,11 +20,16 @@ const { locale = "en", title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <!-- Only the file for the page's own script: an English page never waits for Arabic glyphs. -->
+    <Font
+      cssVariable="--font-readex"
+      preload={[{ subset: locale === "ar" ? "arabic" : "latin" }]}
+    />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <slot name="head" />
   </head>
-  <body class="bg-stone-50 text-stone-900 antialiased">
+  <body class="antialiased">
     <slot />
   </body>
 </html>

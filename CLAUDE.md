@@ -11,7 +11,7 @@ The product's name lives only in `src/config/site.ts` (with the site's URL, the 
 ## Stack
 
 - Astro 7 with static output (every page pre-rendered HTML), TypeScript strict (`astro/tsconfigs/strict`), content collections with MDX
-- Tailwind CSS v4 (through `@tailwindcss/vite`); Hala's design tokens arrive in Phase 1
+- Tailwind CSS v4 (through `@tailwindcss/vite`) on Hala's design system (see Design system below)
 - Cloudflare Pages (project `hala-site`, https://hala-site.pages.dev), deployed from GitHub Actions with Wrangler; a Pages Function for the lead form in Phase 6
 - Vitest (unit), Playwright with axe (end-to-end, desktop and mobile), Lighthouse CI (mobile), all in GitHub Actions
 - pnpm 11; Node 24 (`engines.node` is the single source of truth). TypeScript stays on 6.0 until `typescript-eslint` and `@astrojs/check` support 7
@@ -42,10 +42,23 @@ The product's name lives only in `src/config/site.ts` (with the site's URL, the 
 - MDX gets `<Brand />` through `render()`'s `components`, so content never spells the name.
 - Arabic copy is reviewed by Mostafa (a native speaker): flag new Arabic text in the step summary.
 
+## Design system
+
+The site uses Hala's design system exactly, so the marketing site and the product read as one brand. Its source is the Hala repository: `docs/design/DESIGN.md` (the rules), `docs/design/TOKENS.md` (how other projects use the tokens) and `src/styles/tokens.css` (the values).
+
+- `src/styles/tokens.css` is a byte-for-byte copy of Hala's file: never edit it here (Prettier skips it). `pnpm tokens:check` compares it with Hala's main branch (the `Design tokens` workflow runs it weekly); `pnpm tokens:sync` copies a new version in, after which run every test and look at both languages in both modes.
+- `src/styles/global.css` wires the tokens into Tailwind with the same names Hala's components use: `bg-background`, `bg-card`, `text-foreground`, `text-secondary-foreground` (ink-2), `text-muted-foreground` (ink-3), `bg-primary` / `text-primary-foreground` / `hover:bg-primary-strong` (the solid teal), `bg-accent` / `text-accent-foreground` (the SOFT teal: Tailwind's `accent` is not DESIGN.md's `accent`), `border-border`, `border-input`. Never use Tailwind's own palette (`stone-*`, `teal-*`, `white`) or raw colors.
+- Type: `text-display`, `text-h1`, `text-h2`, `text-h3`, `text-large`, `text-body`, `text-small`, `text-caption` (size, line height, heading weight and tracking together). Inside `lang="ar"` the line heights grow and tracking goes, automatically; never add `tracking-*` or case transforms to Arabic.
+- Shape: `rounded-control` (10px: buttons, fields), `rounded-surface` (16px: cards, panels), `rounded-panel` (20px), `rounded-badge` (6px), full pills for choices. Depth: `shadow-level-1` to `shadow-level-3`, surfaces instead of borders.
+- Motion: only `transform` and `opacity`, 120/200/280 ms (`var(--hala-duration-fast)` and friends) with `ease-hala`, behind `motion-safe:`; a reduced-motion rule in `global.css` stops whatever forgets.
+- Light and dark follow the device (`prefers-color-scheme`); `.hala-light` and `.hala-dark` force one. Every page passes axe in both.
+- **Font:** Readex Pro for both scripts, through Astro's Fonts API (`fonts` in `astro.config.ts`): downloaded at build time and served from this site as one variable file per script (Latin, Arabic; weights 400 to 600) with `unicode-range` and a size-adjusted fallback, so nothing shifts when it arrives. `BaseLayout` preloads only the page's own script's file.
+
 ## Code conventions
 
 - Prettier formats everything (`.astro` included; Tailwind classes sorted). ESLint (`typescript-eslint` strict, `eslint-plugin-astro`) must pass with zero warnings.
 - Layouts work right to left: use logical classes (`ms-`/`me-`, `ps-`/`pe-`, `start-`/`end-`, `text-start`), never `left`/`right` ones.
+- Scripts in `scripts/` that fetch set `process.exitCode` instead of calling `process.exit()` after a request: exiting while a connection is still closing crashes Node on Windows (0xC0000409).
 - No `console.log` in site code (scripts in `scripts/` may print), no commented-out code, no unused code, no empty `catch` blocks: say what happens instead (`return false`, a comment on why nothing else is needed).
 - No abstractions for single-use code.
 
@@ -58,18 +71,19 @@ The product's name lives only in `src/config/site.ts` (with the site's URL, the 
 
 ## Commands
 
-| Command                             | What it does                                                                        |
-| ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `pnpm dev`                          | Astro dev server at http://localhost:4321                                           |
-| `pnpm build`                        | Build the static site into `dist/`                                                  |
-| `pnpm serve`                        | Serve `dist/` on Cloudflare's runtime at http://localhost:8788                      |
-| `pnpm check`                        | `astro check`: types in `.astro` and `.ts` files                                    |
-| `pnpm lint`                         | ESLint; fails on any warning                                                        |
-| `pnpm format` / `pnpm format:check` | Prettier: rewrite / check only (CI checks)                                          |
-| `pnpm test` / `pnpm test:watch`     | Vitest unit tests                                                                   |
-| `pnpm test:e2e`                     | Playwright (desktop and mobile, axe); starts `pnpm serve` itself                    |
-| `pnpm lighthouse`                   | Lighthouse CI: mobile, 3 runs per page, fails below 95; reports in `.lighthouseci/` |
-| `pnpm smoke <url>`                  | Checks a deployed copy from the outside (status codes, `lang`/`dir`, redirect, 404) |
+| Command                             | What it does                                                                                               |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                          | Astro dev server at http://localhost:4321                                                                  |
+| `pnpm build`                        | Build the static site into `dist/`                                                                         |
+| `pnpm serve`                        | Serve `dist/` on Cloudflare's runtime at http://localhost:8788                                             |
+| `pnpm check`                        | `astro check`: types in `.astro` and `.ts` files                                                           |
+| `pnpm lint`                         | ESLint; fails on any warning                                                                               |
+| `pnpm format` / `pnpm format:check` | Prettier: rewrite / check only (CI checks)                                                                 |
+| `pnpm test` / `pnpm test:watch`     | Vitest unit tests                                                                                          |
+| `pnpm test:e2e`                     | Playwright (desktop and mobile, axe); starts `pnpm serve` itself                                           |
+| `pnpm lighthouse`                   | Lighthouse CI: mobile, 3 runs per page, fails below 95 or on any layout shift; reports in `.lighthouseci/` |
+| `pnpm smoke <url>`                  | Checks a deployed copy from the outside (status codes, `lang`/`dir`, redirect, 404)                        |
+| `pnpm tokens:check` / `tokens:sync` | Compare the design tokens with Hala's main branch / copy Hala's current file in                            |
 
 First Playwright run on a machine: `pnpm exec playwright install chromium`.
 

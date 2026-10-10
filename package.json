@@ -20,6 +20,8 @@
     "test:e2e": "playwright test",
     "lighthouse": "lhci autorun",
     "smoke": "node scripts/smoke.mjs",
+    "tokens:check": "node scripts/tokens.mjs check",
+    "tokens:sync": "node scripts/tokens.mjs sync",
     "astro": "astro"
   },
   "dependencies": {

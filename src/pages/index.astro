@@ -39,16 +39,20 @@ const choices = [
     })();
   </script>
   <main class="mx-auto flex min-h-svh max-w-3xl flex-col justify-center gap-10 px-4 py-16 sm:px-6">
-    <h1 class="text-center text-3xl font-semibold">
+    <h1 class="text-center text-h1">
       <span>{site.name}</span> <span aria-hidden="true">|</span>{" "}
       <span lang="ar">{site.nameAr}</span>
     </h1>
     <ul class="grid gap-4 sm:grid-cols-2">
       {choices.map(({ locale, label, intro }) => (
-        <li lang={locale} dir={localeInfo[locale].dir} class="rounded-2xl bg-white p-6 shadow-sm">
-          <p class="text-stone-700">{intro}</p>
+        <li
+          lang={locale}
+          dir={localeInfo[locale].dir}
+          class="rounded-surface bg-card p-6 shadow-level-1"
+        >
+          <p class="text-secondary-foreground">{intro}</p>
           <a
-            class="mt-4 inline-block rounded-lg bg-teal-800 px-4 py-2.5 font-medium text-white hover:bg-teal-900"
+            class="mt-4 inline-block rounded-control bg-primary px-4 py-2.5 font-medium text-primary-foreground hover:bg-primary-strong"
             href={`/${locale}/`}
             hreflang={locale}
             data-locale={locale}
