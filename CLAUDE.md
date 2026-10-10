@@ -77,5 +77,6 @@ First Playwright run on a machine: `pnpm exec playwright install chromium`.
 
 - `.github/workflows/ci.yml` runs on every push to any branch: **checks** (format, lint, types, unit) and **build** in parallel; then **e2e** and **lighthouse** on the built files; then **deploy**, which uploads those exact files with `wrangler pages deploy` (`main` to production at https://hala-site.pages.dev, any other branch to its preview, `<branch>.hala-site.pages.dev`) and runs `pnpm smoke` against the new deployment.
 - Deploying needs the repository secret `CLOUDFLARE_API_TOKEN` (a token with only Account, Cloudflare Pages, Edit) and the variable `CLOUDFLARE_ACCOUNT_ID`.
+- Cloudflare adds `X-Robots-Tag: noindex` to every preview deployment (checked 2026-10-10), so previews never compete with production in search; production has no such header.
 - `wrangler.toml` describes the Pages project (`pages_build_output_dir`, compatibility date) for both `pnpm serve` and deploys.
 - **Wrangler gotcha:** when Wrangler detects an AI agent and the Pages project doesn't exist, `wrangler pages project create` and `wrangler pages deploy` are silently turned into a Workers deploy (it adds the Cloudflare adapter and deploys a Worker). The project exists now, so this can't happen here again; for a new Pages project, create it once with `--force`.

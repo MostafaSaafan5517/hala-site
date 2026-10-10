@@ -4,7 +4,7 @@ The bilingual (Arabic and English) marketing website for [Hala](https://github.c
 
 **Live:** https://hala-site.pages.dev · **Hala's live demo:** https://hala-phi.vercel.app/demo
 
-> Work in progress: Phase 0 (setup) of 9. The goals and phases are listed below.
+> Work in progress: Phase 0 (setup) is done; the goals and phases are listed below.
 
 ## Goals
 
@@ -40,7 +40,7 @@ pnpm build && pnpm test:e2e && pnpm lighthouse
 
 ## Phases
 
-- [ ] 0. Setup: Astro, i18n routing, tests, CI, deploys to Cloudflare Pages
+- [x] 0. Setup: Astro, i18n routing, tests, CI, deploys to Cloudflare Pages
 - [ ] 1. Hala's design system and the layout
 - [ ] 2. Core pages in English and Arabic
 - [ ] 3. Technical SEO
