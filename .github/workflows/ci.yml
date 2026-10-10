@@ -1,0 +1,125 @@
+name: CI
+
+# Every push to any branch is checked, built, tested and, when everything passes, deployed:
+# `main` to production, any other branch to its own preview (<branch>.hala-site.pages.dev).
+on:
+  push:
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the run it makes obsolete, except on main, where every
+# production deployment runs to the end.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  # Wrangler: no usage reports from CI.
+  WRANGLER_SEND_METRICS: "false"
+
+jobs:
+  checks:
+    name: Format, lint, types, unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm check
+      - run: pnpm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm build
+      # The exact files that are tested are the ones that get deployed.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: dist/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  e2e:
+    name: End-to-end tests (desktop and mobile, axe)
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: dist/
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+        env:
+          CI: "true"
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  lighthouse:
+    name: Lighthouse (mobile, 95+ in every category)
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: dist/
+      - run: pnpm lighthouse
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/reports/
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: [checks, e2e, lighthouse]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: dist/
+      - id: deploy
+        name: Upload to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: ${{ github.ref_name }}
+          # Wrangler writes what it deployed here, one JSON object per line.
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.jsonl
+        run: |
+          pnpm exec wrangler pages deploy --branch "$BRANCH" --commit-hash "$GITHUB_SHA" --commit-dirty=false
+          url=$(node -e '
+            const lines = require("fs").readFileSync(process.argv[1], "utf8").trim().split("\n");
+            const deploy = lines.map((line) => JSON.parse(line)).find((entry) => entry.type === "pages-deploy-detailed");
+            if (!deploy?.url) throw new Error("Wrangler reported no deployment URL");
+            console.log(deploy.url);
+          ' "$WRANGLER_OUTPUT_FILE_PATH")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      # This exact deployment, checked from the outside.
+      - run: pnpm smoke "${{ steps.deploy.outputs.url }}"
