@@ -6,6 +6,7 @@ import calendarCheck from "@phosphor-icons/core/regular/calendar-check.svg?raw";
 import checkCircle from "@phosphor-icons/core/regular/check-circle.svg?raw";
 import githubLogo from "@phosphor-icons/core/regular/github-logo.svg?raw";
 import globe from "@phosphor-icons/core/regular/globe.svg?raw";
+import info from "@phosphor-icons/core/regular/info.svg?raw";
 import list from "@phosphor-icons/core/regular/list.svg?raw";
 import scissors from "@phosphor-icons/core/regular/scissors.svg?raw";
 import shieldCheck from "@phosphor-icons/core/regular/shield-check.svg?raw";
@@ -19,6 +20,7 @@ export const icons = {
   "check-circle": checkCircle,
   "github-logo": githubLogo,
   globe,
+  info,
   list,
   scissors,
   "shield-check": shieldCheck,

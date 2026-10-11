@@ -96,4 +96,36 @@ const howItWorks = defineCollection({
     }),
 });
 
-export const collections = { home, features, "how-it-works": howItWorks };
+const pricing = defineCollection({
+  loader: perLanguage("pricing"),
+  schema: z.object({
+    ...seo,
+    intro: z.object({ heading: text, lead: text }),
+    /** Says plainly that the prices are an example: nothing on the page can be bought. */
+    notice: text,
+    plans: z
+      .array(
+        z.object({
+          name: text,
+          price: text,
+          period: text,
+          summary: text,
+          features: z.array(text).min(1),
+        }),
+      )
+      .length(2),
+    costs: z.object({ heading: text, text, points: z.array(text).min(1) }),
+    closing: z.object({ heading: text, text, faqLink: text }),
+  }),
+});
+
+const faq = defineCollection({
+  loader: perLanguage("faq"),
+  schema: z.object({
+    ...seo,
+    intro: z.object({ heading: text, lead: text }),
+    items: z.array(z.object({ question: text, answer: text })).min(6),
+  }),
+});
+
+export const collections = { home, features, "how-it-works": howItWorks, pricing, faq };

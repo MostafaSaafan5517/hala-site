@@ -11,6 +11,10 @@ const pages = [
   { path: "/ar/features/", lang: "ar", dir: "rtl" },
   { path: "/en/how-it-works/", lang: "en", dir: "ltr" },
   { path: "/ar/how-it-works/", lang: "ar", dir: "rtl" },
+  { path: "/en/pricing/", lang: "en", dir: "ltr" },
+  { path: "/ar/pricing/", lang: "ar", dir: "rtl" },
+  { path: "/en/faq/", lang: "en", dir: "ltr" },
+  { path: "/ar/faq/", lang: "ar", dir: "rtl" },
 ] as const;
 
 for (const { path, lang, dir } of pages) {

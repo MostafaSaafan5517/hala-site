@@ -1,0 +1,43 @@
+title: "{brand} pricing: an example for a portfolio project"
+description: "Example pricing for {brand}, a portfolio project that isn't for sale, and what an AI booking assistant like it really costs to run."
+
+intro:
+  heading: Pricing, as an example
+  lead: Two plans that show how a product like {brand} could be priced, and the real numbers behind them.
+
+notice: "{brand} is a portfolio project: it is built and works, but it isn't sold, so nothing on this page can be bought and there is no billing. The prices below are an example."
+
+plans:
+  - name: Starter
+    price: $29
+    period: per month, example price
+    summary: For one location with a small team.
+    features:
+      - The chat on your website, in Arabic and English
+      - Answers from your FAQs and policies, with sources
+      - Bookings, moves and cancellations the customer confirms
+      - The inbox, with takeover by your team
+      - Priced for about 1,000 AI replies a month
+  - name: Team
+    price: $79
+    period: per month, example price
+    summary: For busier businesses with several staff.
+    features:
+      - Everything in Starter
+      - Owners, admins and staff, each with their own permissions
+      - The Usage tab, with spend per day and per model
+      - A daily spending limit for the AI
+      - Priced for about 5,000 AI replies a month
+
+costs:
+  heading: What it really costs to run
+  text: The example prices above leave plenty of room, because the AI itself is inexpensive and capped.
+  points:
+    - In the live demo, a reply costs about $0.002, so 1,000 replies come to about $2
+    - Every AI call is logged with its cost, and the Usage tab adds them up per day
+    - A daily budget per business and a limit per conversation stop costs from running away
+
+closing:
+  heading: Try it before you think about prices
+  text: The live demo has the real chat on a salon's website. Questions about how it would work for you are answered on the FAQ page.
+  faqLink: Read the FAQ

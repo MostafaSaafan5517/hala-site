@@ -1,0 +1,39 @@
+---
+import { primaryButton } from "../../../components/buttons";
+import Icon from "../../../components/Icon.astro";
+import { site } from "../../../config/site";
+import { isLocale } from "../../../i18n/locales";
+import { ui } from "../../../i18n/ui";
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import { everyLanguage, pageCopy } from "../../../lib/content";
+
+export const getStaticPaths = everyLanguage;
+
+const { lang } = Astro.params;
+if (!isLocale(lang)) throw new Error(`Unknown language "${lang}"`);
+const locale = lang;
+const copy = await pageCopy("faq", locale);
+---
+
+<SiteLayout locale={locale} title={copy.title} description={copy.description}>
+  <div class="page-container pt-10 pb-10 lg:pt-16">
+    <h1 class="max-w-[20ch] text-h1 sm:text-display">{copy.intro.heading}</h1>
+    <p class="mt-5 max-w-[60ch] text-large text-secondary-foreground">{copy.intro.lead}</p>
+  </div>
+
+  <!-- Every answer stays visible: people and search engines both read them directly. -->
+  <div class="page-container pb-16">
+    <div class="max-w-[76ch] divide-y divide-border rounded-panel bg-card px-6 shadow-level-1 sm:px-8">
+      {copy.items.map(({ question, answer }) => (
+        <section class="py-6 sm:py-7">
+          <h2 class="text-h3">{question}</h2>
+          <p class="mt-2 text-secondary-foreground">{answer}</p>
+        </section>
+      ))}
+    </div>
+    <a href={site.demoUrl} class:list={["mt-10", primaryButton]}>
+      {ui[locale].tryDemo}
+      <Icon name="arrow-up-right" size={20} mirrorInRtl />
+    </a>
+  </div>
+</SiteLayout>
