@@ -11,6 +11,9 @@ importers:
       '@astrojs/mdx':
         specifier: ^8.0.3
         version: 8.0.3(@astrojs/markdown-satteri@0.4.3)(astro@7.3.8(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+      '@phosphor-icons/core':
+        specifier: ^2.1.1
+        version: 2.1.1
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
@@ -888,6 +891,9 @@ packages:
 
   '@paulirish/trace_engine@0.0.53':
     resolution: {integrity: sha512-PUl/vlfo08Oj804VI5nDPeSk9vyslnBlVzDDwFt8SUVxY8+KdGMkra/vrXjEEHe8gb7+RqVTfOIlGw0nyrEelA==}
+
+  '@phosphor-icons/core@2.1.1':
+    resolution: {integrity: sha512-v4ARvrip4qBCImOE5rmPUylOEK4iiED9ZyKjcvzuezqMaiRASCHKcRIuvvxL/twvLpkfnEODCOJp5dM4eZilxQ==}
 
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
@@ -4590,6 +4596,8 @@ snapshots:
     dependencies:
       legacy-javascript: 0.0.3
       third-party-web: 0.30.0
+
+  '@phosphor-icons/core@2.1.1': {}
 
   '@pkgr/core@0.3.6': {}
 

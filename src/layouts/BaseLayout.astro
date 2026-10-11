@@ -4,27 +4,31 @@ import "../styles/global.css";
 import { localeInfo, type Locale } from "../i18n/locales";
 
 interface Props {
-  /** The page's language. Bilingual pages (the root, the 404) are English with their Arabic marked. */
+  /**
+   * The page's language. Without one the page is bilingual (the root, the 404): English, with its
+   * Arabic parts marked.
+   */
   locale?: Locale;
   title: string;
   description: string;
 }
 
-const { locale = "en", title, description } = Astro.props;
+const { locale, title, description } = Astro.props;
+const lang = locale ?? "en";
+// Preload only the font file for the script above the fold: a one-language page never waits for
+// the other script's glyphs, and a bilingual page shows both at once (preloading only Latin there
+// let the Arabic swap in late, a measurable layout shift).
+const subsets = locale ? [locale === "ar" ? "arabic" : "latin"] : ["latin", "arabic"];
 ---
 
 <!doctype html>
-<html lang={locale} dir={localeInfo[locale].dir}>
+<html lang={lang} dir={localeInfo[lang].dir}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- Only the file for the page's own script: an English page never waits for Arabic glyphs. -->
-    <Font
-      cssVariable="--font-readex"
-      preload={[{ subset: locale === "ar" ? "arabic" : "latin" }]}
-    />
+    <Font cssVariable="--font-readex" preload={subsets.map((subset) => ({ subset }))} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <slot name="head" />

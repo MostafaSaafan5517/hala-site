@@ -1,0 +1,17 @@
+---
+// Hala's wordmark, "Hala | هلا" in Readex Pro semibold (Hala's DESIGN.md, Marks), the same in
+// both languages: the brand is bilingual.
+import { site } from "../config/site";
+---
+
+<span class="inline-flex items-center gap-2 text-h3 font-semibold whitespace-nowrap">
+  <span lang="en" dir="ltr">
+    {site.name}
+  </span>
+  <span aria-hidden="true" class="text-muted-foreground">
+    |
+  </span>
+  <span lang="ar" dir="rtl">
+    {site.nameAr}
+  </span>
+</span>

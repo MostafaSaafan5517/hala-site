@@ -19,28 +19,19 @@ for (const { path, lang, dir } of pages) {
   });
 }
 
-test("each language's home links to the live demo, the code and the other language", async ({
-  page,
-}) => {
-  await page.goto("/en/");
-  await expect(page.getByRole("link", { name: "Try the live demo" })).toHaveAttribute(
-    "href",
-    site.demoUrl,
-  );
-  await expect(page.getByRole("link", { name: "Read the code on GitHub" })).toHaveAttribute(
-    "href",
-    site.githubUrl,
-  );
-  await page.getByRole("link", { name: "Read this page in Arabic" }).click();
-  await expect(page).toHaveURL("/ar/");
-  await expect(page.getByRole("link", { name: "جرّب العرض المباشر" })).toHaveAttribute(
-    "href",
-    site.demoUrl,
-  );
-  await expect(page.getByRole("link", { name: "اقرأ هذه الصفحة بالإنجليزية" })).toHaveAttribute(
-    "href",
-    "/en/",
-  );
+test("each language's home links to the live demo and the code", async ({ page }) => {
+  for (const [path, demo, code] of [
+    ["/en/", "Try the live demo", "Read the code on GitHub"],
+    ["/ar/", "جرّب العرض المباشر", "اطّلع على الكود على GitHub"],
+  ] as const) {
+    await page.goto(path);
+    const main = page.getByRole("main");
+    await expect(main.getByRole("link", { name: demo })).toHaveAttribute("href", site.demoUrl);
+    await expect(main.getByRole("link", { name: code })).toHaveAttribute("href", site.githubUrl);
+    const footer = page.getByRole("contentinfo");
+    await expect(footer.getByRole("link", { name: demo })).toHaveAttribute("href", site.demoUrl);
+    await expect(footer.getByRole("link", { name: code })).toHaveAttribute("href", site.githubUrl);
+  }
 });
 
 test("the root waits for a first-time visitor to choose a language", async ({ page }) => {
@@ -63,7 +54,7 @@ test("the root remembers the language a visitor chose", async ({ page }) => {
   await expect(page).toHaveURL("/ar/");
 
   // Switching language on a page updates the choice.
-  await page.getByRole("link", { name: "اقرأ هذه الصفحة بالإنجليزية" }).click();
+  await page.getByRole("banner").getByRole("link", { name: "English" }).click();
   await expect(page).toHaveURL("/en/");
   await page.goto("/");
   await expect(page).toHaveURL("/en/");

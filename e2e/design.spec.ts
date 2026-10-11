@@ -15,9 +15,11 @@ test("each language preloads exactly one font file, its own script's", async ({ 
   expect(english).toHaveLength(1);
   expect(arabic).toHaveLength(1);
   expect(english[0]).not.toBe(arabic[0]);
-  // The root and the 404 are English pages with some Arabic: they preload the Latin file.
-  await page.goto("/");
-  expect(await preloadedFonts(page)).toEqual(english);
+  // The root and the 404 show both scripts above the fold, so they preload both files.
+  for (const path of ["/", "/en/no-such-page/"]) {
+    await page.goto(path);
+    expect((await preloadedFonts(page)).toSorted()).toEqual([...english, ...arabic].toSorted());
+  }
 });
 
 for (const path of ["/en/", "/ar/"]) {
@@ -57,3 +59,48 @@ test.describe("in dark mode", () => {
     });
   }
 });
+
+test("the header's language switch opens the same page in the other language", async ({ page }) => {
+  await page.goto("/en/");
+  const toArabic = page.getByRole("banner").getByRole("link", { name: "العربية" });
+  await expect(toArabic).toHaveAttribute("lang", "ar");
+  await expect(toArabic).toHaveAttribute("hreflang", "ar");
+  await toArabic.click();
+  await expect(page).toHaveURL("/ar/");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await page.getByRole("banner").getByRole("link", { name: "English" }).click();
+  await expect(page).toHaveURL("/en/");
+});
+
+test("the wordmark links home in the page's language", async ({ page }) => {
+  await page.goto("/ar/");
+  await expect(page.getByRole("link", { name: "هلا، الصفحة الرئيسية" })).toHaveAttribute(
+    "href",
+    "/ar/",
+  );
+  await page.goto("/en/");
+  await expect(page.getByRole("link", { name: "Hala, home" })).toHaveAttribute("href", "/en/");
+});
+
+test("the skip link is the first stop for the keyboard and moves focus to the content", async ({
+  page,
+}) => {
+  await page.goto("/en/");
+  await page.keyboard.press("Tab");
+  const skip = page.getByRole("link", { name: "Skip to content" });
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeInViewport();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("main")).toBeFocused();
+});
+
+for (const path of ["/en/", "/ar/"]) {
+  test(`${path} fits a 320px-wide phone without sideways scrolling`, async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.goto(path);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBe(0);
+  });
+}

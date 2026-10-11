@@ -1,0 +1,26 @@
+---
+// The same page in the other language, as a pill with a globe (Hala's DESIGN.md, the widget's
+// language pill). Its name is the other language's own name, marked with its language, so a
+// screen reader says it the way a speaker would. Following it remembers the choice for the root.
+import { localeInfo, type Locale } from "../i18n/locales";
+import { pathInLocale } from "../i18n/paths";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** The language to switch to. */
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<a
+  href={pathInLocale(Astro.url.pathname, locale)}
+  hreflang={locale}
+  lang={locale}
+  data-locale={locale}
+  class="inline-flex h-10 items-center gap-2 rounded-full px-3.5 text-small font-medium text-secondary-foreground hover:bg-secondary active:translate-y-px motion-safe:transition-[background-color,transform]"
+>
+  <Icon name="globe" size={18} />
+  {localeInfo[locale].name}
+</a>

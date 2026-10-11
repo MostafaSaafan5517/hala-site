@@ -1,0 +1,42 @@
+---
+import { site } from "../config/site";
+import type { Locale } from "../i18n/locales";
+import { ui } from "../i18n/ui";
+import Icon from "./Icon.astro";
+import Wordmark from "./Wordmark.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const words = ui[locale];
+const linkClass =
+  "inline-flex items-center gap-2 rounded-control py-1 text-small text-secondary-foreground hover:text-foreground motion-safe:transition-colors";
+---
+
+<footer class="mt-auto bg-secondary">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] sm:px-6 lg:px-8">
+    <div class="max-w-md space-y-3">
+      <Wordmark />
+      <p class="text-small text-secondary-foreground">{words.footerAbout}</p>
+      <p class="text-small text-muted-foreground">{words.portfolioNote}</p>
+    </div>
+    <nav aria-label={words.footerNavLabel}>
+      <ul class="space-y-1">
+        <li>
+          <a href={site.demoUrl} class={linkClass}>
+            {words.tryDemo}
+            <Icon name="arrow-up-right" mirrorInRtl />
+          </a>
+        </li>
+        <li>
+          <a href={site.githubUrl} class={linkClass}>
+            <Icon name="github-logo" />
+            {words.readCode}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>
