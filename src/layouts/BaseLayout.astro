@@ -15,10 +15,12 @@ interface Props {
 
 const { locale, title, description } = Astro.props;
 const lang = locale ?? "en";
-// Preload only the font file for the script above the fold: a one-language page never waits for
-// the other script's glyphs, and a bilingual page shows both at once (preloading only Latin there
-// let the Arabic swap in late, a measurable layout shift).
-const subsets = locale ? [locale === "ar" ? "arabic" : "latin"] : ["latin", "arabic"];
+// Preload the font files the first screen needs. English pages need only the Latin file (their
+// one Arabic word, in the header, measured no visible shift). Arabic pages need both: the Latin
+// file's range includes the space, digits and brackets that Arabic text uses, so without it every
+// space was drawn in the fallback until it arrived, and the lines re-wrapped (a measured shift of
+// 0.049). Bilingual pages (the root, the 404) show both scripts.
+const subsets = locale === "en" ? ["latin"] : ["latin", "arabic"];
 ---
 
 <!doctype html>
