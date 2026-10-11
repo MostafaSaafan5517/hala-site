@@ -7,6 +7,8 @@ const pages = [
   { path: "/", lang: "en", dir: "ltr" },
   { path: "/en/", lang: "en", dir: "ltr" },
   { path: "/ar/", lang: "ar", dir: "rtl" },
+  { path: "/en/features/", lang: "en", dir: "ltr" },
+  { path: "/ar/features/", lang: "ar", dir: "rtl" },
 ] as const;
 
 for (const { path, lang, dir } of pages) {

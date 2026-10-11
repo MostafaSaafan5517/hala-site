@@ -104,3 +104,42 @@ for (const path of ["/en/", "/ar/"]) {
     expect(overflow).toBe(0);
   });
 }
+
+test("below 1024px the pages sit behind a menu button that opens, closes and returns focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/");
+  const button = page.getByRole("button", { name: "Menu" });
+  const features = page.getByRole("banner").getByRole("link", { name: "Features" });
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(features).toBeHidden();
+
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(features).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(features).toBeHidden();
+  await expect(button).toBeFocused();
+
+  await button.click();
+  await features.click();
+  await expect(page).toHaveURL("/en/features/");
+  // The new page starts with the menu closed; the current page is marked inside it.
+  await page.getByRole("button", { name: "Menu" }).click();
+  await expect(page.getByRole("banner").getByRole("link", { name: "Features" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+});
+
+test("from 1024px the pages are in the header and there is no menu button", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/ar/");
+  await expect(page.getByRole("button", { name: "القائمة" })).toBeHidden();
+  for (const name of ["المزايا", "كيف يعمل", "الأسعار", "الأسئلة الشائعة"]) {
+    await expect(page.getByRole("banner").getByRole("link", { name })).toBeVisible();
+  }
+});

@@ -99,9 +99,10 @@ const demoButton =
       button.setAttribute("aria-expanded", String(open));
       menu.hidden = !open;
     };
-    button.addEventListener("click", () => setOpen(menu.hidden));
+    const isOpen = () => button.getAttribute("aria-expanded") === "true";
+    button.addEventListener("click", () => setOpen(!isOpen()));
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !menu.hidden) {
+      if (event.key === "Escape" && isOpen()) {
         setOpen(false);
         button.focus();
       }

@@ -50,4 +50,27 @@ const home = defineCollection({
     }),
 });
 
-export const collections = { home };
+const feature = (context: SchemaContext) =>
+  z.object({ heading: text, text, points: z.array(text).default([]), image: screenshot(context) });
+
+const features = defineCollection({
+  loader: perLanguage("features"),
+  schema: (context) =>
+    z.object({
+      ...seo,
+      intro: z.object({ heading: text, lead: text }),
+      answers: feature(context),
+      booking: feature(context),
+      languages: z.object({
+        heading: text,
+        text,
+        images: z.array(screenshot(context)).length(2),
+      }),
+      inbox: feature(context),
+      costs: feature(context),
+      privacy: z.object({ heading: text, text, points: z.array(text).min(1) }),
+      closing: z.object({ heading: text, text }),
+    }),
+});
+
+export const collections = { home, features };
