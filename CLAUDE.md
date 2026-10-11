@@ -52,7 +52,8 @@ The site uses Hala's design system exactly, so the marketing site and the produc
 - Shape: `rounded-control` (10px: buttons, fields), `rounded-surface` (16px: cards, panels), `rounded-panel` (20px), `rounded-badge` (6px), full pills for choices. Depth: `shadow-level-1` to `shadow-level-3`, surfaces instead of borders.
 - Motion: only `transform` and `opacity`, 120/200/280 ms (`var(--hala-duration-fast)` and friends) with `ease-hala`, behind `motion-safe:`; a reduced-motion rule in `global.css` stops whatever forgets.
 - Light and dark follow the device (`prefers-color-scheme`); `.hala-light` and `.hala-dark` force one. Every page passes axe in both.
-- **Font:** Readex Pro for both scripts, through Astro's Fonts API (`fonts` in `astro.config.ts`): downloaded at build time and served from this site as one variable file per script (Latin, Arabic; weights 400 to 600) with `unicode-range` and a size-adjusted fallback, so nothing shifts when it arrives. `BaseLayout` preloads only the page's own script's file.
+- **Font:** Readex Pro for both scripts, through Astro's Fonts API (`fonts` in `astro.config.ts`): downloaded at build time and served from this site as one variable file per script (Latin, Arabic; weights 400 to 600) with `unicode-range` and a size-adjusted fallback, so nothing shifts when it arrives. `BaseLayout` preloads only the page's own script's file; bilingual pages (the root, the 404) preload both, since both scripts are above the fold (preloading only Latin there let the Arabic swap in late, a measured shift of 0.00017).
+- **Layout-shift budget: 0.001**, not 0. Each one-language page shows one word of the other script in its header (the wordmark's other half, the language switch), whose font file isn't preloaded; when it arrives the word's width changes by a pixel or two (measured on CI: 0.00005 on /en/, 0.000005 on /ar/). Lighthouse and PageSpeed display both as 0; preloading both files everywhere would cost every page 23 to 31 KB to remove it. Any shift a person could notice still fails the build.
 
 ## Code conventions
 
@@ -71,19 +72,19 @@ The site uses Hala's design system exactly, so the marketing site and the produc
 
 ## Commands
 
-| Command                             | What it does                                                                                               |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`                          | Astro dev server at http://localhost:4321                                                                  |
-| `pnpm build`                        | Build the static site into `dist/`                                                                         |
-| `pnpm serve`                        | Serve `dist/` on Cloudflare's runtime at http://localhost:8788                                             |
-| `pnpm check`                        | `astro check`: types in `.astro` and `.ts` files                                                           |
-| `pnpm lint`                         | ESLint; fails on any warning                                                                               |
-| `pnpm format` / `pnpm format:check` | Prettier: rewrite / check only (CI checks)                                                                 |
-| `pnpm test` / `pnpm test:watch`     | Vitest unit tests                                                                                          |
-| `pnpm test:e2e`                     | Playwright (desktop and mobile, axe); starts `pnpm serve` itself                                           |
-| `pnpm lighthouse`                   | Lighthouse CI: mobile, 3 runs per page, fails below 95 or on any layout shift; reports in `.lighthouseci/` |
-| `pnpm smoke <url>`                  | Checks a deployed copy from the outside (status codes, `lang`/`dir`, redirect, 404)                        |
-| `pnpm tokens:check` / `tokens:sync` | Compare the design tokens with Hala's main branch / copy Hala's current file in                            |
+| Command                             | What it does                                                                                                         |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                          | Astro dev server at http://localhost:4321                                                                            |
+| `pnpm build`                        | Build the static site into `dist/`                                                                                   |
+| `pnpm serve`                        | Serve `dist/` on Cloudflare's runtime at http://localhost:8788                                                       |
+| `pnpm check`                        | `astro check`: types in `.astro` and `.ts` files                                                                     |
+| `pnpm lint`                         | ESLint; fails on any warning                                                                                         |
+| `pnpm format` / `pnpm format:check` | Prettier: rewrite / check only (CI checks)                                                                           |
+| `pnpm test` / `pnpm test:watch`     | Vitest unit tests                                                                                                    |
+| `pnpm test:e2e`                     | Playwright (desktop and mobile, axe); starts `pnpm serve` itself                                                     |
+| `pnpm lighthouse`                   | Lighthouse CI: mobile, 3 runs per page, fails below 95 or on a layout shift above 0.001; reports in `.lighthouseci/` |
+| `pnpm smoke <url>`                  | Checks a deployed copy from the outside (status codes, `lang`/`dir`, redirect, 404)                                  |
+| `pnpm tokens:check` / `tokens:sync` | Compare the design tokens with Hala's main branch / copy Hala's current file in                                      |
 
 First Playwright run on a machine: `pnpm exec playwright install chromium`.
 

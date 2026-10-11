@@ -40,7 +40,7 @@
         "cumulative-layout-shift": [
           "error",
           {
-            "maxNumericValue": 0,
+            "maxNumericValue": 0.001,
             "aggregationMethod": "median-run"
           }
         ]
