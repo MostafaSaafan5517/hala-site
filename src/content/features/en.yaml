@@ -1,0 +1,71 @@
+title: "{brand} features: grounded answers and real bookings"
+description: "How {brand} answers from your own FAQs, books into real free times, speaks Arabic and English, hands chats to your team and keeps AI costs capped."
+
+intro:
+  heading: Everything a front desk does in chat, and nothing it shouldn't
+  lead: "{brand} answers questions, books appointments and hands customers to your team, in Arabic and English. Each part below is built and working in the live demo."
+
+answers:
+  heading: Answers from your own information
+  text: You add FAQs and policies in English or Arabic. The assistant answers only from them, shows numbered sources, and says it doesn't know instead of guessing.
+  points:
+    - Search by meaning and by keywords, with Arabic spelling normalized
+    - A "Try a question" box shows exactly which passages it would answer from
+    - Prices only ever come from your services, never from a message
+  image:
+    src: ../../assets/screens/knowledge-try.jpg
+    alt: "The Knowledge tab: the salon's FAQs and policies in English and Arabic, and a Try a question panel showing the passage that answers Is there parking?"
+
+booking:
+  heading: Real availability, confirmed bookings
+  text: Free times come from your working hours, each staff member's own hours and time off, closures, existing bookings and buffers, and your booking rules. The customer confirms every booking, change or cancellation before it happens.
+  points:
+    - Daylight saving handled by the time zone database
+    - A retried or repeated request never books twice
+    - Customers can't cancel inside your cancellation window; your staff always can
+  image:
+    src: ../../assets/screens/bookings.jpg
+    alt: "The Bookings tab: one day's appointments in the business's time zone, with a button for a new booking."
+
+languages:
+  heading: Arabic and English, as equals
+  text: Customers write in either language and get replies in theirs. The chat turns right to left for Arabic, and each service can carry both names.
+  images:
+    - src: ../../assets/screens/widget-answer-en.jpg
+      alt: "The chat in English: Is there parking? answered from the salon's FAQ, with its source."
+    - src: ../../assets/screens/widget-answer-ar.jpg
+      alt: "The same chat in Arabic, right to left: a question about parking answered from the salon's FAQs, with two sources."
+
+inbox:
+  heading: Your team can step in at any time
+  text: Conversations waiting for a person come first in the inbox. Your staff read the whole transcript, including every step the assistant took, then take over, reply in the customer's chat, hand back or close.
+  points:
+    - While a person has the chat, the assistant stays quiet
+    - Customers can ask for a person at any time, and get one when the assistant doesn't know
+  image:
+    src: ../../assets/screens/inbox-taken-over.jpg
+    alt: "A conversation in the inbox, taken over by a staff member: the transcript, the assistant's search step, a reply box, and buttons to hand back or close."
+
+costs:
+  heading: Costs you can see and cap
+  text: Every AI call is logged with its tokens, cost and time. A daily budget per business, a token budget per conversation and rate limits keep a busy or abusive day in check; past a limit, no AI is called and a person takes over.
+  points:
+    - In the live demo, a reply costs about $0.002
+    - The Usage tab shows spend per day, bookings made and requests for a person
+  image:
+    src: ../../assets/screens/usage.png
+    alt: "The Usage tab: today's spend of $0.0066 against a $5.00 daily limit, website conversations, bookings made by the assistant, and a spend-per-day chart."
+
+privacy:
+  heading: Private by design
+  text: Customer data stays with the business it belongs to, and the rules are enforced by the database, not by hoping the app gets it right.
+  points:
+    - Each business's data is invisible to every other business, proven by tests for every rule
+    - Visitors need no account, and only a hash of their chat token is stored
+    - Rate limits count a keyed hash of a visitor's IP address, never the address itself
+    - The chat can only be shown on the websites you list
+    - An append-only log records every change and every action the assistant takes
+
+closing:
+  heading: See every part working
+  text: The live demo is a salon's website with the real chat. Ask, book, then sign in as the salon to see the inbox, the bookings and the costs.

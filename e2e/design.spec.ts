@@ -6,19 +6,19 @@ const preloadedFonts = (page: Page) =>
     .locator('link[rel="preload"][as="font"]')
     .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
 
-test("each language preloads exactly one font file, its own script's", async ({ page }) => {
+test("English pages preload the Latin font file; Arabic and bilingual pages preload both", async ({
+  page,
+}) => {
   await page.goto("/en/");
   const english = await preloadedFonts(page);
-  await page.goto("/ar/");
-  const arabic = await preloadedFonts(page);
-
   expect(english).toHaveLength(1);
-  expect(arabic).toHaveLength(1);
-  expect(english[0]).not.toBe(arabic[0]);
-  // The root and the 404 show both scripts above the fold, so they preload both files.
-  for (const path of ["/", "/en/no-such-page/"]) {
+  // Arabic text uses the Latin file too (spaces, digits, brackets), and the root and the 404 show
+  // both scripts: all of them preload both files.
+  for (const path of ["/ar/", "/ar/faq/", "/", "/no-such-page/"]) {
     await page.goto(path);
-    expect((await preloadedFonts(page)).toSorted()).toEqual([...english, ...arabic].toSorted());
+    const preloaded = await preloadedFonts(page);
+    expect(preloaded, path).toHaveLength(2);
+    expect(preloaded, path).toContain(english[0]);
   }
 });
 
@@ -49,7 +49,7 @@ for (const path of ["/en/", "/ar/"]) {
 test.describe("in dark mode", () => {
   test.use({ colorScheme: "dark" });
 
-  for (const path of ["/", "/en/", "/ar/", "/en/no-such-page/"]) {
+  for (const path of ["/", "/en/", "/ar/", "/no-such-page/", "/ar/no-such-page/"]) {
     test(`${path} switches to the dark tokens and passes axe`, async ({ page }) => {
       await page.goto(path);
       const background = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -104,3 +104,42 @@ for (const path of ["/en/", "/ar/"]) {
     expect(overflow).toBe(0);
   });
 }
+
+test("below 1024px the pages sit behind a menu button that opens, closes and returns focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/");
+  const button = page.getByRole("button", { name: "Menu" });
+  const features = page.getByRole("banner").getByRole("link", { name: "Features" });
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(features).toBeHidden();
+
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(features).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(features).toBeHidden();
+  await expect(button).toBeFocused();
+
+  await button.click();
+  await features.click();
+  await expect(page).toHaveURL("/en/features/");
+  // The new page starts with the menu closed; the current page is marked inside it.
+  await page.getByRole("button", { name: "Menu" }).click();
+  await expect(page.getByRole("banner").getByRole("link", { name: "Features" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+});
+
+test("from 1024px the pages are in the header and there is no menu button", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/ar/");
+  await expect(page.getByRole("button", { name: "القائمة" })).toBeHidden();
+  for (const name of ["المزايا", "كيف يعمل", "الأسعار", "الأسئلة الشائعة"]) {
+    await expect(page.getByRole("banner").getByRole("link", { name })).toBeVisible();
+  }
+});

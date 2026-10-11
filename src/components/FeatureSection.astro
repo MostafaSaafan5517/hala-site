@@ -1,0 +1,49 @@
+---
+// One feature: its heading, a short explanation and its points beside a real screen. `flip`
+// puts the screen first (on the start side) so consecutive features alternate.
+import type { ImageMetadata } from "astro";
+import Icon from "./Icon.astro";
+import Screenshot from "./Screenshot.astro";
+
+interface Props {
+  heading: string;
+  text: string;
+  points: string[];
+  image: { src: ImageMetadata; alt: string; caption?: string | undefined };
+  flip?: boolean;
+  class?: string;
+}
+
+const { heading, text, points, image, flip = false, class: className } = Astro.props;
+---
+
+<section class:list={["py-16 sm:py-20", className]}>
+  <div
+    class:list={[
+      "page-container grid items-center gap-10 lg:gap-14",
+      flip
+        ? "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]"
+        : "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]",
+    ]}
+  >
+    <div class:list={[flip && "lg:order-last"]}>
+      <h2 class="text-h2">{heading}</h2>
+      <p class="mt-3 max-w-[60ch] text-large text-secondary-foreground">{text}</p>
+      {points.length > 0 && (
+        <ul class="mt-6 space-y-3">
+          {points.map((point) => (
+            <li class="flex gap-3 text-secondary-foreground">
+              <Icon name="check-circle" size={20} class="mt-0.5 text-primary" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+    <Screenshot
+      {...image}
+      widths={[640, 960, 1440]}
+      sizes="(min-width: 1152px) 640px, (min-width: 1024px) 55vw, 100vw"
+    />
+  </div>
+</section>

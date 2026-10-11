@@ -1,0 +1,28 @@
+title: "{brand} FAQ: answers about the AI booking assistant"
+description: "Direct answers about {brand}: whether it makes things up, double bookings, confirmations, languages, your team, costs, privacy and how to add it."
+
+intro:
+  heading: Questions, answered directly
+  lead: "What business owners usually ask about {brand}, with short answers that match how it actually works."
+
+items:
+  - question: "Is {brand} a product I can buy?"
+    answer: "No. {brand} is a portfolio project by Mostafa Saafan: it is fully built, and the live demo runs on a real deployment, but it isn't sold. This website shows how it would be presented to businesses."
+  - question: Can it make up answers?
+    answer: It answers only from your FAQs, policies, services and opening hours, and shows the sources it used. When nothing relevant is found, it says it doesn't know and offers to bring in someone from your team.
+  - question: Can two customers book the same time?
+    answer: No. The database refuses any confirmed booking that overlaps another one for the same staff member, even when two requests arrive at the same moment. Tests send many requests at one time slot at once and check that exactly one succeeds.
+  - question: Does it book anything without asking the customer?
+    answer: No. Every booking, change or cancellation is shown to the customer first, worded from your own data in their language, and happens only when they tap Confirm.
+  - question: Which languages does it speak?
+    answer: Arabic and English. Customers write in either language and get replies in theirs, and the chat turns right to left for Arabic. The dashboard your team uses is in English for now.
+  - question: Can my staff take over a conversation?
+    answer: Yes. Conversations that need a person come first in the inbox. A team member reads the whole conversation, takes it over and replies in the customer's chat; the assistant stays quiet until they hand it back.
+  - question: How do I add it to my website?
+    answer: Paste one script tag into your site and list the websites allowed to show it. A chat button appears, and the chat opens in its own frame, so it can't clash with your site's design.
+  - question: What does the AI cost to run?
+    answer: Every AI call is recorded with its cost. In the live demo a reply costs about $0.002. A daily budget per business and limits per conversation and per visitor keep costs in check; past a limit, a person takes over.
+  - question: Can someone trick it into a discount or a free booking?
+    answer: No. Prices only ever come from your services, and messages and documents are treated as information, never as instructions. The tests include an AI that follows such tricks on purpose, and the bookings still keep your prices and rules.
+  - question: Who can see my customers' data?
+    answer: Only your business. Each business's data is invisible to every other one, enforced by the database and checked by tests. Visitors need no account, and their chat token and IP address are only ever stored as hashes.

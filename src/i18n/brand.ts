@@ -13,3 +13,19 @@ export function brandName(locale: Locale): string {
 export function withBrand(text: string, locale: Locale): string {
   return text.replaceAll("{brand}", brandName(locale));
 }
+
+/** withBrand for every string inside a page's copy (objects and lists included). */
+export function withBrandDeep<T>(value: T, locale: Locale): T {
+  if (typeof value === "string") return withBrand(value, locale) as T;
+  if (Array.isArray(value)) return value.map((item) => withBrandDeep(item, locale)) as T;
+  if (
+    value !== null &&
+    typeof value === "object" &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, withBrandDeep(item, locale)]),
+    ) as T;
+  }
+  return value;
+}

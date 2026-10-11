@@ -1,56 +1,148 @@
 ---
-import { getCollection, render } from "astro:content";
-import Brand from "../../components/Brand.astro";
+import { primaryButton, secondaryButton } from "../../components/buttons";
 import Icon from "../../components/Icon.astro";
+import Screenshot from "../../components/Screenshot.astro";
 import { site } from "../../config/site";
-import SiteLayout from "../../layouts/SiteLayout.astro";
-import { withBrand } from "../../i18n/brand";
-import { localeOfEntry, locales } from "../../i18n/locales";
+import { isLocale } from "../../i18n/locales";
 import { ui } from "../../i18n/ui";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { everyLanguage, pageCopy } from "../../lib/content";
 
-export async function getStaticPaths() {
-  const homes = await getCollection("pages", (entry) => entry.id.endsWith("/home"));
-  return locales.map((locale) => {
-    const entry = homes.find((home) => localeOfEntry(home.id) === locale);
-    if (!entry) {
-      throw new Error(
-        `The home page has no ${locale} version: add src/content/pages/${locale}/home.mdx.`,
-      );
-    }
-    return { params: { lang: locale }, props: { entry } };
-  });
-}
+export const getStaticPaths = everyLanguage;
 
-const { entry } = Astro.props;
-const locale = localeOfEntry(entry.id);
+const { lang } = Astro.params;
+if (!isLocale(lang)) throw new Error(`Unknown language "${lang}"`);
+const locale = lang;
 const words = ui[locale];
-const { Content } = await render(entry);
+const { title, description, hero, audiences, steps, proofs, closing } = await pageCopy(
+  "home",
+  locale,
+);
 ---
 
-<SiteLayout
-  locale={locale}
-  title={withBrand(entry.data.title, locale)}
-  description={withBrand(entry.data.description, locale)}
->
-  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-    <div class="max-w-[68ch] space-y-5 text-large text-secondary-foreground [&_h1]:text-h1 [&_h1]:text-foreground sm:[&_h1]:text-display">
-      <Content components={{ Brand }} />
+<SiteLayout locale={locale} title={title} description={description}>
+  <section class="page-container grid items-center gap-10 pt-10 pb-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12 lg:pt-16 lg:pb-24">
+    <div>
+      <h1 class="text-h1 sm:text-display">{hero.heading}</h1>
+      <p class="mt-5 max-w-[46ch] text-large text-secondary-foreground">{hero.lead}</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href={site.demoUrl} class={primaryButton}>
+          {words.tryDemo}
+          <Icon name="arrow-up-right" size={20} mirrorInRtl />
+        </a>
+        <a href={`/${locale}/how-it-works/`} class={secondaryButton}>
+          {hero.secondaryCta}
+        </a>
+      </div>
     </div>
-    <p class="mt-10 flex flex-wrap gap-3">
-      <a
-        class="inline-flex h-11 items-center gap-2 rounded-control bg-primary px-5 font-medium text-primary-foreground hover:bg-primary-strong active:translate-y-px motion-safe:transition-[background-color,transform]"
-        href={site.demoUrl}
-      >
+    <Screenshot
+      {...hero.image}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1152px) 640px, (min-width: 1024px) 55vw, 100vw"
+      priority
+    />
+  </section>
+
+  <section class="bg-card py-16 sm:py-24">
+    <div class="page-container grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-16">
+      <h2 class="max-w-[18ch] text-h2">{audiences.heading}</h2>
+      <ul class="divide-y divide-border">
+        {audiences.items.map(({ icon, name, text }) => (
+          <li class="flex gap-5 py-6 first:pt-0 last:pb-0">
+            <span class="grid size-11 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground">
+              <Icon name={icon} size={22} />
+            </span>
+            <div>
+              <h3 class="text-h3">{name}</h3>
+              <p class="mt-1 max-w-[60ch] text-secondary-foreground">{text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="page-container py-16 sm:py-24">
+    <h2 class="text-h2">{steps.heading}</h2>
+    <div class="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
+      <Screenshot
+        {...steps.image}
+        widths={[640, 960, 1440]}
+        sizes="(min-width: 1152px) 620px, (min-width: 1024px) 55vw, 100vw"
+        class="lg:order-none order-last"
+      />
+      <ol class="space-y-8">
+        {steps.items.map(({ heading, text }, index) => (
+          <li class="flex gap-5">
+            <span
+              aria-hidden="true"
+              class="grid size-10 shrink-0 place-items-center rounded-full bg-primary font-semibold text-primary-foreground tabular-nums"
+            >
+              {index + 1}
+            </span>
+            <div>
+              <h3 class="text-h3">{heading}</h3>
+              <p class="mt-1 text-secondary-foreground">{text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="bg-card py-16 sm:py-24">
+    <div class="page-container">
+      <h2 class="max-w-[24ch] text-h2">{proofs.heading}</h2>
+      <!-- Two columns of equal height: sources and the database's guarantee on one side, the
+           taller confirmation on the other. -->
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        <div class="flex flex-col gap-6">
+          <article class="flex flex-col gap-8 rounded-panel bg-background p-6 sm:p-8">
+            <div>
+              <h3 class="text-h3">{proofs.sources.heading}</h3>
+              <p class="mt-2 text-secondary-foreground">{proofs.sources.text}</p>
+            </div>
+            <Screenshot
+              {...proofs.sources.image}
+              widths={[300, 390]}
+              sizes="(min-width: 640px) 300px, 80vw"
+              class="mx-auto w-full max-w-[300px]"
+            />
+          </article>
+          <article class="flex flex-1 flex-col gap-4 rounded-panel bg-primary p-6 text-primary-foreground sm:p-8">
+            <span class="grid size-12 shrink-0 place-items-center rounded-full bg-primary-foreground text-primary">
+              <Icon name="calendar-check" size={26} />
+            </span>
+            <div>
+              <h3 class="text-h3">{proofs.doubleBookings.heading}</h3>
+              <p class="mt-2">{proofs.doubleBookings.text}</p>
+            </div>
+          </article>
+        </div>
+        <article class="flex flex-col gap-8 rounded-panel bg-accent p-6 sm:p-8">
+          <div>
+            <h3 class="text-h3">{proofs.confirmation.heading}</h3>
+            <p class="mt-2 text-secondary-foreground">{proofs.confirmation.text}</p>
+          </div>
+          <Screenshot
+            {...proofs.confirmation.image}
+            widths={[300, 390]}
+            sizes="(min-width: 640px) 300px, 80vw"
+            class="mx-auto w-full max-w-[300px]"
+          />
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-container py-16 sm:py-24">
+    <div class="max-w-[60ch]">
+      <h2 class="text-h2">{closing.heading}</h2>
+      <p class="mt-3 text-large text-secondary-foreground">{closing.text}</p>
+      <a href={site.demoUrl} class:list={["mt-8", primaryButton]}>
         {words.tryDemo}
         <Icon name="arrow-up-right" size={20} mirrorInRtl />
       </a>
-      <a
-        class="inline-flex h-11 items-center gap-2 rounded-control bg-secondary px-5 font-medium text-foreground hover:bg-secondary-strong active:translate-y-px motion-safe:transition-[background-color,transform]"
-        href={site.githubUrl}
-      >
-        <Icon name="github-logo" size={20} />
-        {words.readCode}
-      </a>
-    </p>
-  </div>
+    </div>
+  </section>
 </SiteLayout>

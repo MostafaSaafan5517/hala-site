@@ -90,6 +90,21 @@
   --text-caption--line-height: var(--hala-text-caption-line-height);
 }
 
+/* The page's width and gutters (Hala's DESIGN.md, Space): up to 1152px, with 16, 24 and 32px at
+   the sides on phones, tablets and desktops. */
+@utility page-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--container-6xl);
+  padding-inline: --spacing(4);
+  @variant sm {
+    padding-inline: --spacing(6);
+  }
+  @variant lg {
+    padding-inline: --spacing(8);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -9,13 +9,15 @@ import Icon from "./Icon.astro";
 interface Props {
   /** The language to switch to. */
   locale: Locale;
+  /** Where to go instead of this page in that language (a 404 has no counterpart). */
+  href?: string | undefined;
 }
 
-const { locale } = Astro.props;
+const { locale, href = pathInLocale(Astro.url.pathname, locale) } = Astro.props;
 ---
 
 <a
-  href={pathInLocale(Astro.url.pathname, locale)}
+  href={href}
   hreflang={locale}
   lang={locale}
   data-locale={locale}

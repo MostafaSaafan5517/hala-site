@@ -4,7 +4,19 @@
       "startServerCommand": "pnpm serve",
       "startServerReadyPattern": "Ready on",
       "startServerReadyTimeout": 60000,
-      "url": ["http://localhost:8788/", "http://localhost:8788/en/", "http://localhost:8788/ar/"],
+      "url": [
+        "http://localhost:8788/",
+        "http://localhost:8788/en/",
+        "http://localhost:8788/ar/",
+        "http://localhost:8788/en/features/",
+        "http://localhost:8788/ar/features/",
+        "http://localhost:8788/en/how-it-works/",
+        "http://localhost:8788/ar/how-it-works/",
+        "http://localhost:8788/en/pricing/",
+        "http://localhost:8788/ar/pricing/",
+        "http://localhost:8788/en/faq/",
+        "http://localhost:8788/ar/faq/"
+      ],
       "numberOfRuns": 3
     },
     "assert": {

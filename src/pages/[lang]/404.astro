@@ -1,0 +1,47 @@
+---
+// The 404 for addresses under /en/ and /ar/, in that language with the site's header and footer.
+// Cloudflare Pages serves the nearest 404.html up the folder tree, so the build moves this page
+// from /<lang>/404/index.html to /<lang>/404.html (astro.config.ts, localizedNotFound).
+import { mainNavigation } from "../../config/navigation";
+import { brandName } from "../../i18n/brand";
+import { isLocale } from "../../i18n/locales";
+import { ui } from "../../i18n/ui";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { everyLanguage } from "../../lib/content";
+
+export const getStaticPaths = everyLanguage;
+
+const { lang } = Astro.params;
+if (!isLocale(lang)) throw new Error(`Unknown language "${lang}"`);
+const locale = lang;
+const words = ui[locale];
+const pages = [
+  { href: `/${locale}/`, label: words.notFound.home },
+  ...mainNavigation.map((page) => ({ href: `/${locale}/${page}/`, label: words.pages[page] })),
+];
+---
+
+<SiteLayout
+  locale={locale}
+  title={`${words.notFound.title} | ${brandName(locale)}`}
+  description={words.notFound.text}
+  alternateHref={`/${locale === "en" ? "ar" : "en"}/`}
+>
+  <div class="page-container py-16 sm:py-24">
+    <p class="text-small font-medium text-muted-foreground">404</p>
+    <h1 class="mt-2 text-h1">{words.notFound.heading}</h1>
+    <p class="mt-4 max-w-[60ch] text-large text-secondary-foreground">{words.notFound.text}</p>
+    <ul class="mt-8 flex flex-wrap gap-2">
+      {pages.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class="inline-flex h-11 items-center rounded-full bg-secondary px-4 font-medium text-foreground hover:bg-secondary-strong"
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</SiteLayout>
