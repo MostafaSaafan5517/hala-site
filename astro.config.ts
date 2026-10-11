@@ -1,8 +1,29 @@
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
+import type { AstroIntegration } from "astro";
 import { defineConfig, fontProviders } from "astro/config";
+import { existsSync, renameSync, rmdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { site } from "./src/config/site";
 import { defaultLocale, locales } from "./src/i18n/locales";
+
+// Cloudflare Pages answers a missing address with the nearest 404.html up the folder tree, so
+// /ar/anything gets /ar/404.html. Astro writes src/pages/[lang]/404.astro as
+// /<lang>/404/index.html; this moves each one to /<lang>/404.html after the build.
+const localizedNotFound: AstroIntegration = {
+  name: "localized-not-found",
+  hooks: {
+    "astro:build:done": ({ dir }) => {
+      for (const locale of locales) {
+        const folder = fileURLToPath(new URL(`${locale}/404/`, dir));
+        const page = `${folder}index.html`;
+        if (!existsSync(page)) throw new Error(`The build has no ${locale} 404 page at ${page}`);
+        renameSync(page, fileURLToPath(new URL(`${locale}/404.html`, dir)));
+        rmdirSync(folder);
+      }
+    },
+  },
+};
 
 export default defineConfig({
   site: site.url,
@@ -30,6 +51,6 @@ export default defineConfig({
       fallbacks: ["sans-serif"],
     },
   ],
-  integrations: [mdx()],
+  integrations: [mdx(), localizedNotFound],
   vite: { plugins: [tailwindcss()] },
 });

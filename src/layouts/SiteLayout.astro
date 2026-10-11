@@ -8,11 +8,13 @@ import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
   locale: Locale;
+  /** The language switch's target, when it isn't this page in the other language. */
+  alternateHref?: string;
   title: string;
   description: string;
 }
 
-const { locale, title, description } = Astro.props;
+const { locale, title, description, alternateHref } = Astro.props;
 ---
 
 <BaseLayout locale={locale} title={title} description={description}>
@@ -23,7 +25,7 @@ const { locale, title, description } = Astro.props;
     >
       {ui[locale].skipToContent}
     </a>
-    <SiteHeader locale={locale} />
+    <SiteHeader locale={locale} alternateHref={alternateHref} />
     <main id="content" tabindex="-1" class="flex-1 focus:outline-none">
       <slot />
     </main>

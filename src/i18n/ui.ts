@@ -16,6 +16,7 @@ interface Words {
   footerNavLabel: string;
   footerPagesLabel: string;
   portfolioNote: string;
+  notFound: { title: string; heading: string; text: string; home: string };
 }
 
 /** Interface words that aren't page content (links, labels), in each language. */
@@ -37,6 +38,12 @@ export const ui = {
     footerNavLabel: "More about the product",
     footerPagesLabel: "Pages",
     portfolioNote: `A portfolio project by ${site.author.en}.`,
+    notFound: {
+      title: "Page not found",
+      heading: "This page doesn't exist",
+      text: "The address may be mistyped, or the page may have moved. These pages do exist:",
+      home: "Home",
+    },
   },
   ar: {
     skipToContent: "انتقل إلى المحتوى",
@@ -56,5 +63,11 @@ export const ui = {
     footerNavLabel: "المزيد عن المنتج",
     footerPagesLabel: "الصفحات",
     portfolioNote: `مشروع من معرض أعمال ${site.author.ar}.`,
+    notFound: {
+      title: "الصفحة غير موجودة",
+      heading: "هذه الصفحة غير موجودة",
+      text: "ربما كُتب العنوان بشكل خاطئ، أو نُقلت الصفحة. وهذه الصفحات موجودة:",
+      home: "الرئيسية",
+    },
   },
 } as const satisfies Record<Locale, Words>;

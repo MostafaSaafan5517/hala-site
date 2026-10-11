@@ -16,7 +16,7 @@ test("each language preloads exactly one font file, its own script's", async ({ 
   expect(arabic).toHaveLength(1);
   expect(english[0]).not.toBe(arabic[0]);
   // The root and the 404 show both scripts above the fold, so they preload both files.
-  for (const path of ["/", "/en/no-such-page/"]) {
+  for (const path of ["/", "/no-such-page/"]) {
     await page.goto(path);
     expect((await preloadedFonts(page)).toSorted()).toEqual([...english, ...arabic].toSorted());
   }
@@ -49,7 +49,7 @@ for (const path of ["/en/", "/ar/"]) {
 test.describe("in dark mode", () => {
   test.use({ colorScheme: "dark" });
 
-  for (const path of ["/", "/en/", "/ar/", "/en/no-such-page/"]) {
+  for (const path of ["/", "/en/", "/ar/", "/no-such-page/", "/ar/no-such-page/"]) {
     test(`${path} switches to the dark tokens and passes axe`, async ({ page }) => {
       await page.goto(path);
       const background = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);

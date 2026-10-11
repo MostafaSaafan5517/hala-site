@@ -84,10 +84,30 @@ test("an address without the trailing slash redirects permanently to the one wit
   }
 });
 
-test("an unknown address gets the bilingual 404 page with a 404 status", async ({ page }) => {
-  const response = await page.goto("/en/no-such-page/");
+test("an unknown address outside the languages gets the bilingual 404", async ({ page }) => {
+  const response = await page.goto("/no-such-page/");
   expect(response?.status()).toBe(404);
   await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "الصفحة غير موجودة" })).toBeVisible();
   expect(await accessibilityViolations(page)).toEqual([]);
 });
+
+for (const [locale, heading, home] of [
+  ["en", "This page doesn't exist", "Home"],
+  ["ar", "هذه الصفحة غير موجودة", "الرئيسية"],
+] as const) {
+  test(`an unknown address under /${locale}/ gets that language's 404, with the site around it`, async ({
+    page,
+  }) => {
+    const response = await page.goto(`/${locale}/no-such-page/`);
+    expect(response?.status()).toBe(404);
+    await expect(page.locator("html")).toHaveAttribute("lang", locale);
+    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+    await expect(page.getByRole("banner")).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: home })).toHaveAttribute(
+      "href",
+      `/${locale}/`,
+    );
+    expect(await accessibilityViolations(page)).toEqual([]);
+  });
+}

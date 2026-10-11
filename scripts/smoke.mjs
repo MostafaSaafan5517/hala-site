@@ -12,6 +12,7 @@ const checks = [
   { path: "/ar/", status: 200, contains: '<html lang="ar" dir="rtl"' },
   { path: "/en", status: 308, location: "/en/" },
   { path: "/no-such-page/", status: 404, contains: "Page not found" },
+  { path: "/ar/no-such-page/", status: 404, contains: '<html lang="ar" dir="rtl"' },
 ];
 
 // After a fetch, set exitCode instead of calling process.exit(): exiting while a connection is

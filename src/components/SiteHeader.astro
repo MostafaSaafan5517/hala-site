@@ -10,9 +10,11 @@ import Wordmark from "./Wordmark.astro";
 
 interface Props {
   locale: Locale;
+  /** The language switch's target, when it isn't this page in the other language. */
+  alternateHref?: string | undefined;
 }
 
-const { locale } = Astro.props;
+const { locale, alternateHref } = Astro.props;
 const words = ui[locale];
 const links = mainNavigation.map((page) => {
   const href = `/${locale}/${page}/`;
@@ -44,7 +46,7 @@ const demoButton =
       </ul>
     </nav>
     <div class="ms-auto flex items-center gap-2">
-      <LanguageSwitch locale={locale === "en" ? "ar" : "en"} />
+      <LanguageSwitch locale={locale === "en" ? "ar" : "en"} href={alternateHref} />
       <!-- The page's own call to action takes over on phones, where the header has no room. -->
       <a href={site.demoUrl} class:list={["hidden sm:inline-flex", demoButton]}>
         {words.tryDemo}
