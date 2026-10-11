@@ -9,5 +9,7 @@ export const site = {
   /** The live product: its public demo and its code. */
   demoUrl: "https://hala-phi.vercel.app/demo",
   githubUrl: "https://github.com/MostafaSaafan5517/hala",
+  /** The technical tour for developers, in Hala's repository. */
+  techTourUrl: "https://github.com/MostafaSaafan5517/hala/blob/main/docs/how-it-works.md",
   author: { en: "Mostafa Saafan", ar: "مصطفى سعفان" },
 } as const;

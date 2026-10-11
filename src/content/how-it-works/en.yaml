@@ -1,0 +1,75 @@
+title: "How {brand} works, in plain language"
+description: "What your customers see, where {brand}'s answers come from, how a booking happens, when your team steps in, and what it costs to run."
+
+intro:
+  heading: How it works, in plain language
+  lead: "A tour of {brand} for business owners: what happens when a customer opens the chat, and the rules that keep it from getting things wrong. Developers can follow the same tour in the code."
+
+contentsLabel: On this page
+
+sections:
+  - id: what-customers-see
+    heading: What your customers see
+    paragraphs:
+      - A chat button appears on your website. Customers open it, ask a question in Arabic or English, and get an answer in their language, with the sources it came from.
+      - When they ask to book, the chat shows the appointment it found, with the service, time, price and their details, and waits for them to tap Confirm.
+    image:
+      src: ../../assets/screens/salon-site-en.png
+      alt: "The chat open on a demo salon's website: an answer in Arabic with its two sources, then a haircut booking waiting for the customer to tap Confirm."
+
+  - id: where-answers-come-from
+    heading: Where the answers come from
+    paragraphs:
+      - "{brand} answers only from what you give it: your FAQs and policies, your services and prices, your opening hours. Each document is split into short passages, and every question is matched against them by meaning and by its key words."
+      - If nothing matches well enough, it doesn't guess. It says it doesn't know and offers to bring in someone from your team.
+    image:
+      src: ../../assets/screens/knowledge-try.jpg
+      alt: "The Knowledge tab: the salon's FAQs and policies, and a Try a question panel showing which passage answers Is there parking?"
+
+  - id: how-a-booking-happens
+    heading: How a booking happens
+    paragraphs:
+      - The assistant looks for free times exactly the way your staff's booking screen does, from your working hours, each staff member's hours and time off, closures, existing bookings and the gaps you keep between them.
+      - The booking is only made after the customer confirms it. Then the database itself checks once more and refuses any appointment that would overlap another one for the same person, even if two customers try for the same slot at the same moment.
+    points:
+      - A repeated or retried request returns the same booking instead of making a second one
+      - Customers can move or cancel within your rules; your staff can always change a booking
+    image:
+      src: ../../assets/screens/widget-booked-en.jpg
+      alt: "After the customer confirmed, the chat shows the haircut as booked, with its reference."
+
+  - id: rules-decide
+    heading: The AI asks, your rules decide
+    paragraphs:
+      - The AI model never changes anything directly. It can only ask for one of eight actions, such as checking availability or booking a time. The server checks every rule before anything happens, and prices only ever come from your services.
+      - That is why a message or a document that tries to trick it, such as "everything is free today", changes nothing that matters. The tests include a model that obeys such tricks on purpose, and the rules still hold.
+
+  - id: when-your-team-steps-in
+    heading: When your team steps in
+    paragraphs:
+      - Conversations that need a person come first in the inbox. Your staff see the whole conversation, including every step the assistant took, take it over, and reply in the customer's chat. While they have it, the assistant stays quiet.
+    image:
+      src: ../../assets/screens/inbox-taken-over.jpg
+      alt: "A conversation in the inbox taken over by a staff member, with a reply box and buttons to hand back or close."
+
+  - id: what-it-costs
+    heading: What it costs to run
+    paragraphs:
+      - Every AI call is recorded with what it cost. In the live demo a reply costs about $0.002. Daily budgets, a limit per conversation and limits per visitor stop a busy or abusive day from running up costs; past a limit, a person takes over.
+    image:
+      src: ../../assets/screens/usage.png
+      alt: "The Usage tab: today's spend against the daily limit, conversations, bookings by the assistant and a spend-per-day chart."
+
+  - id: tested-not-promised
+    heading: Tested, not promised
+    paragraphs:
+      - Each rule on this page is backed by an automated test that fails when the rule is broken. Two of them run before every change ships, and one on demand.
+    points:
+      - About 480 database tests, including one for each privacy rule and its refusals
+      - Tests that fire many simultaneous bookings at one time slot and expect exactly one to succeed
+      - 24 scripted conversations in Arabic and English with the real AI, scored on every reply
+
+developers:
+  heading: For developers
+  text: The technical tour covers the same ground decision by decision, with where each part lives in the code.
+  link: Read the technical tour on GitHub

@@ -1,0 +1,86 @@
+---
+import Icon from "../../../components/Icon.astro";
+import Screenshot from "../../../components/Screenshot.astro";
+import { site } from "../../../config/site";
+import { isLocale } from "../../../i18n/locales";
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import { everyLanguage, pageCopy } from "../../../lib/content";
+
+export const getStaticPaths = everyLanguage;
+
+const { lang } = Astro.params;
+if (!isLocale(lang)) throw new Error(`Unknown language "${lang}"`);
+const locale = lang;
+const copy = await pageCopy("how-it-works", locale);
+---
+
+<SiteLayout locale={locale} title={copy.title} description={copy.description}>
+  <div class="page-container pt-10 pb-10 lg:pt-16">
+    <h1 class="max-w-[20ch] text-h1 sm:text-display">{copy.intro.heading}</h1>
+    <p class="mt-5 max-w-[60ch] text-large text-secondary-foreground">{copy.intro.lead}</p>
+  </div>
+
+  <div class="page-container grid gap-10 pb-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-14">
+    <!-- On wide screens the contents stay in view while the sections scroll past (CSS only). -->
+    <nav aria-labelledby="contents-label" class="lg:sticky lg:top-6 lg:self-start">
+      <p id="contents-label" class="text-small font-medium text-muted-foreground">
+        {copy.contentsLabel}
+      </p>
+      <ol class="mt-3 space-y-1 border-s-2 border-border">
+        {copy.sections.map(({ id, heading }) => (
+          <li>
+            <a
+              href={`#${id}`}
+              class="-ms-0.5 block border-s-2 border-transparent py-1.5 ps-4 text-small text-secondary-foreground hover:border-primary hover:text-foreground"
+            >
+              {heading}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="space-y-16">
+      {copy.sections.map(({ id, heading, paragraphs, points, image }) => (
+        <section id={id} class="scroll-mt-6">
+          <h2 class="text-h2">{heading}</h2>
+          <div class="mt-4 max-w-[68ch] space-y-4 text-large text-secondary-foreground">
+            {paragraphs.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </div>
+          {points.length > 0 && (
+            <ul class="mt-6 max-w-[68ch] space-y-3">
+              {points.map((point) => (
+                <li class="flex gap-3 text-secondary-foreground">
+                  <Icon name="check-circle" size={20} class="mt-0.5 text-primary" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {image && (
+            <Screenshot
+              {...image}
+              widths={[390, 640, 960, 1280]}
+              sizes="(min-width: 1152px) 780px, (min-width: 1024px) 70vw, 100vw"
+              class:list={["mt-8", image.src.width < 600 ? "max-w-[320px]" : "max-w-[780px]"]}
+            />
+          )}
+        </section>
+      ))}
+
+      <section class="rounded-panel bg-card p-6 shadow-level-1 sm:p-8">
+        <h2 class="text-h3">{copy.developers.heading}</h2>
+        <p class="mt-2 max-w-[60ch] text-secondary-foreground">{copy.developers.text}</p>
+        <a
+          href={site.techTourUrl}
+          class="mt-4 inline-flex items-center gap-2 rounded-control font-medium text-primary underline underline-offset-4 hover:text-primary-strong"
+        >
+          <Icon name="github-logo" size={20} />
+          {copy.developers.link}
+        </a>
+      </section>
+    </div>
+  </div>
+</SiteLayout>

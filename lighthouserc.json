@@ -9,7 +9,9 @@
         "http://localhost:8788/en/",
         "http://localhost:8788/ar/",
         "http://localhost:8788/en/features/",
-        "http://localhost:8788/ar/features/"
+        "http://localhost:8788/ar/features/",
+        "http://localhost:8788/en/how-it-works/",
+        "http://localhost:8788/ar/how-it-works/"
       ],
       "numberOfRuns": 3
     },

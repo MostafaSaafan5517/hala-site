@@ -73,4 +73,27 @@ const features = defineCollection({
     }),
 });
 
-export const collections = { home, features };
+const howItWorks = defineCollection({
+  loader: perLanguage("how-it-works"),
+  schema: (context) =>
+    z.object({
+      ...seo,
+      intro: z.object({ heading: text, lead: text }),
+      contentsLabel: text,
+      sections: z
+        .array(
+          z.object({
+            /** The section's anchor, the same in both languages so links can be shared. */
+            id: z.string().regex(/^[a-z-]+$/),
+            heading: text,
+            paragraphs: z.array(text).min(1),
+            points: z.array(text).default([]),
+            image: screenshot(context).optional(),
+          }),
+        )
+        .min(1),
+      developers: z.object({ heading: text, text, link: text }),
+    }),
+});
+
+export const collections = { home, features, "how-it-works": howItWorks };
