@@ -39,7 +39,10 @@ export default defineConfig({
   },
   // Readex Pro, Hala's one typeface for Latin and Arabic (Hala's DESIGN.md, Type). Astro downloads
   // it at build time and serves it from this site: one variable file per script, so a page loads
-  // only the script it shows. Fallback metrics are generated so nothing shifts when it arrives.
+  // only the script it shows, and the layout preloads that file. `optional`: the browser waits
+  // briefly for the preloaded font and never swaps it in later, because a late swap re-wraps
+  // Arabic headings (the system fallbacks' Arabic is wider) and moved whole pages on CI's
+  // Lighthouse (layout shift 0.049). Cached after the first page, it is used everywhere after.
   fonts: [
     {
       provider: fontProviders.google(),
@@ -49,6 +52,7 @@ export default defineConfig({
       styles: ["normal"],
       subsets: ["latin", "arabic"],
       fallbacks: ["sans-serif"],
+      display: "optional",
     },
   ],
   integrations: [mdx(), localizedNotFound],
