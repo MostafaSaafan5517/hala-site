@@ -1,15 +1,53 @@
-import { defineCollection } from "astro:content";
+import { defineCollection, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { iconNames } from "./components/icons";
 
-// Page copy, one folder per language (en/home.mdx and ar/home.mdx are the same page). Titles and
-// descriptions write the product's name as `{brand}` (src/i18n/brand.ts).
-const pages = defineCollection({
-  loader: glob({ base: "./src/content/pages", pattern: "**/*.mdx" }),
-  schema: z.object({
-    title: z.string().min(1),
-    description: z.string().min(1),
-  }),
+// One collection per page, one file per language named after it (`en.yaml`, `ar.yaml`): the two
+// files are the same page, and a page route fails the build when either is missing. Copy writes
+// the product's name as `{brand}` (src/i18n/brand.ts). Screenshots are real Hala screens in
+// src/assets/screens/, referenced by relative path so the build checks they exist.
+const perLanguage = (folder: string) =>
+  glob({ base: `./src/content/${folder}`, pattern: "{en,ar}.yaml" });
+
+const text = z.string().min(1);
+const seo = { title: text, description: text };
+const screenshot = ({ image }: SchemaContext) =>
+  z.object({
+    src: image(),
+    alt: text,
+    /** Shown under the image, e.g. that the dashboard is in English. */
+    caption: text.optional(),
+  });
+
+const home = defineCollection({
+  loader: perLanguage("home"),
+  schema: (context) =>
+    z.object({
+      ...seo,
+      hero: z.object({
+        heading: text,
+        lead: text,
+        secondaryCta: text,
+        image: screenshot(context),
+      }),
+      audiences: z.object({
+        heading: text,
+        items: z.array(z.object({ icon: z.enum(iconNames), name: text, text })).min(1),
+      }),
+      steps: z.object({
+        heading: text,
+        items: z.array(z.object({ heading: text, text })).length(3),
+        image: screenshot(context),
+      }),
+      proofs: z.object({
+        heading: text,
+        sources: z.object({ heading: text, text, image: screenshot(context) }),
+        confirmation: z.object({ heading: text, text, image: screenshot(context) }),
+        doubleBookings: z.object({ heading: text, text }),
+      }),
+      closing: z.object({ heading: text, text }),
+    }),
 });
 
-export const collections = { pages };
+export const collections = { home };

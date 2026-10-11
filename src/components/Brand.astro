@@ -1,9 +1,0 @@
----
-// The product's name in the current page's language, for content (MDX) that must not spell it.
-import { brandName } from "../i18n/brand";
-import { defaultLocale, isLocale } from "../i18n/locales";
-
-const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : defaultLocale;
----
-
-{brandName(locale)}

@@ -1,4 +1,5 @@
 ---
+import { mainNavigation } from "../config/navigation";
 import { site } from "../config/site";
 import { brandName } from "../i18n/brand";
 import type { Locale } from "../i18n/locales";
@@ -13,23 +14,97 @@ interface Props {
 
 const { locale } = Astro.props;
 const words = ui[locale];
+const links = mainNavigation.map((page) => {
+  const href = `/${locale}/${page}/`;
+  return { page, href, label: words.pages[page], current: Astro.url.pathname === href };
+});
+const demoButton =
+  "h-10 items-center gap-2 rounded-control bg-primary px-4 text-small font-medium whitespace-nowrap text-primary-foreground hover:bg-primary-strong active:translate-y-px motion-safe:transition-[background-color,transform]";
 ---
 
-<header>
-  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+<header class="relative">
+  <div class="page-container flex h-16 items-center gap-4">
     <a href={`/${locale}/`} aria-label={words.homeLink(brandName(locale))} class="rounded-control">
       <Wordmark />
     </a>
-    <div class="flex items-center gap-2">
+    <!-- From 1024px the pages fit on one line; below that they move into the menu. -->
+    <nav aria-label={words.mainNavLabel} class="ms-6 hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {links.map(({ href, label, current }) => (
+          <li>
+            <a
+              href={href}
+              aria-current={current ? "page" : undefined}
+              class="inline-flex h-10 items-center rounded-full px-3.5 text-small font-medium text-secondary-foreground hover:bg-secondary aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground motion-safe:transition-colors"
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="ms-auto flex items-center gap-2">
       <LanguageSwitch locale={locale === "en" ? "ar" : "en"} />
       <!-- The page's own call to action takes over on phones, where the header has no room. -->
-      <a
-        href={site.demoUrl}
-        class="hidden h-10 items-center gap-2 rounded-control bg-primary px-4 text-small font-medium whitespace-nowrap text-primary-foreground hover:bg-primary-strong active:translate-y-px motion-safe:transition-[background-color,transform] sm:inline-flex"
-      >
+      <a href={site.demoUrl} class:list={["hidden sm:inline-flex", demoButton]}>
         {words.tryDemo}
         <Icon name="arrow-up-right" size={18} mirrorInRtl />
       </a>
+      <button
+        type="button"
+        data-menu-button
+        aria-expanded="false"
+        aria-controls="site-menu"
+        class="group inline-flex size-11 items-center justify-center rounded-control text-foreground hover:bg-secondary lg:hidden"
+      >
+        <span class="sr-only">{words.menu}</span>
+        <Icon name="list" size={22} class="group-aria-expanded:hidden" />
+        <Icon name="x" size={22} class="hidden group-aria-expanded:block" />
+      </button>
     </div>
   </div>
+  <div
+    id="site-menu"
+    hidden
+    class="absolute inset-x-0 top-full z-20 bg-card px-4 pt-2 pb-6 shadow-level-2 sm:px-6 lg:hidden"
+  >
+    <nav aria-label={words.mainNavLabel}>
+      <ul class="mx-auto max-w-6xl">
+        {links.map(({ href, label, current }) => (
+          <li>
+            <a
+              href={href}
+              aria-current={current ? "page" : undefined}
+              class="flex h-12 items-center rounded-control px-3 font-medium text-foreground hover:bg-secondary aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <a href={site.demoUrl} class:list={["mt-4 flex w-full justify-center sm:hidden", demoButton]}>
+      {words.tryDemo}
+      <Icon name="arrow-up-right" size={18} mirrorInRtl />
+    </a>
+  </div>
 </header>
+
+<script>
+  // The menu below 1024px: a disclosure button that shows and hides the list; Escape closes it.
+  const button = document.querySelector<HTMLButtonElement>("[data-menu-button]");
+  const menu = document.getElementById(button?.getAttribute("aria-controls") ?? "");
+  if (button && menu) {
+    const setOpen = (open: boolean) => {
+      button.setAttribute("aria-expanded", String(open));
+      menu.hidden = !open;
+    };
+    button.addEventListener("click", () => setOpen(menu.hidden));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !menu.hidden) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+  }
+</script>

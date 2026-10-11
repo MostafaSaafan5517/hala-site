@@ -1,0 +1,58 @@
+title: "{brand}: AI booking assistant for salons and clinics"
+description: "{brand} answers your customers in Arabic and English from your own information, and books the appointments they confirm. Try the live demo."
+
+hero:
+  heading: Your front desk, in Arabic and English
+  lead: "{brand} answers customers on your website from your own information, and books the appointments they confirm."
+  secondaryCta: See how it works
+  image:
+    src: ../../assets/screens/salon-site-en.png
+    alt: "The chat open on a demo salon's website: an answer in Arabic with its two sources, then a haircut with Layla on Friday at 17:00 for SAR 120, waiting for the customer to tap Confirm."
+
+audiences:
+  heading: Made for businesses that run on appointments
+  items:
+    - icon: scissors
+      name: Salons and barbers
+      text: Prices, hours and parking answered at any hour, and haircuts booked with the stylist who does them.
+    - icon: stethoscope
+      name: Clinics
+      text: Answers taken from your own policies, and appointments that keep your notice and cancellation rules.
+    - icon: barbell
+      name: Studios
+      text: Sessions booked only into truly free times, following each instructor's own hours and time off.
+
+steps:
+  heading: Up and running in three steps
+  items:
+    - heading: Tell it about your business
+      text: Add your services in English and Arabic, your staff and their hours, your booking rules, and the FAQs and policies it answers from.
+    - heading: Add one line to your website
+      text: One script tag puts a chat button on your site. Only the websites you list can show it.
+    - heading: Let customers chat, and step in any time
+      text: Every conversation and booking shows up for your team, who can take a chat over and reply themselves.
+  image:
+    src: ../../assets/screens/widget-settings.jpg
+    alt: "The Widget tab in the dashboard: the switch that shows the chat, the websites allowed to show it, the one-line embed code and a live preview of the chat."
+
+proofs:
+  heading: Built so the important things can't go wrong
+  sources:
+    heading: Answers with their sources
+    text: Replies come only from your FAQs and policies, with numbered sources. When nothing fits, it says it doesn't know and offers a person.
+    image:
+      src: ../../assets/screens/widget-answer-en.jpg
+      alt: "A customer asks whether there is parking; the reply quotes the salon's FAQ and lists it as source 1."
+  confirmation:
+    heading: The customer confirms every booking
+    text: Before anything is booked, moved or cancelled, the customer sees the details and taps Confirm. A request changed after it was shown can't run.
+    image:
+      src: ../../assets/screens/widget-booked-en.jpg
+      alt: "After the customer confirmed, the chat shows the haircut as booked, with its reference."
+  doubleBookings:
+    heading: No double bookings
+    text: The database itself refuses two confirmed bookings that overlap for the same staff member. A test fires many requests at one time slot at once, and exactly one wins.
+
+closing:
+  heading: Try it on a demo salon's website
+  text: Ask Nour Salon's chat anything in English or Arabic, or book an appointment. Then sign in as the salon to see your conversation in the inbox.

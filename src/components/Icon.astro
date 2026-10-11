@@ -1,14 +1,10 @@
 ---
 // A Phosphor icon (regular weight, Hala's icon family), inlined at build time: no JavaScript and
 // no extra request. Icons accompany words, so they are hidden from screen readers.
-import arrowUpRight from "@phosphor-icons/core/regular/arrow-up-right.svg?raw";
-import githubLogo from "@phosphor-icons/core/regular/github-logo.svg?raw";
-import globe from "@phosphor-icons/core/regular/globe.svg?raw";
-
-const icons = { "arrow-up-right": arrowUpRight, "github-logo": githubLogo, globe };
+import { icons, type IconName } from "./icons";
 
 interface Props {
-  name: keyof typeof icons;
+  name: IconName;
   /** 16px beside body text, 18 to 20px in buttons (Hala's DESIGN.md, Icons). */
   size?: number;
   /** Arrows point the way the text reads: mirrored in right-to-left pages. */

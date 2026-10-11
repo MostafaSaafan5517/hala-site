@@ -19,15 +19,21 @@ for (const { path, lang, dir } of pages) {
   });
 }
 
-test("each language's home links to the live demo and the code", async ({ page }) => {
-  for (const [path, demo, code] of [
-    ["/en/", "Try the live demo", "Read the code on GitHub"],
-    ["/ar/", "جرّب العرض المباشر", "اطّلع على الكود على GitHub"],
+test("each language's home leads to the live demo, how it works and the code", async ({ page }) => {
+  for (const [path, demo, howItWorks, code] of [
+    ["/en/", "Try the live demo", "See how it works", "Read the code on GitHub"],
+    ["/ar/", "جرّب العرض المباشر", "شاهد كيف يعمل", "اطّلع على الكود على GitHub"],
   ] as const) {
     await page.goto(path);
     const main = page.getByRole("main");
-    await expect(main.getByRole("link", { name: demo })).toHaveAttribute("href", site.demoUrl);
-    await expect(main.getByRole("link", { name: code })).toHaveAttribute("href", site.githubUrl);
+    await expect(main.getByRole("link", { name: demo }).first()).toHaveAttribute(
+      "href",
+      site.demoUrl,
+    );
+    await expect(main.getByRole("link", { name: howItWorks })).toHaveAttribute(
+      "href",
+      `${path}how-it-works/`,
+    );
     const footer = page.getByRole("contentinfo");
     await expect(footer.getByRole("link", { name: demo })).toHaveAttribute("href", site.demoUrl);
     await expect(footer.getByRole("link", { name: code })).toHaveAttribute("href", site.githubUrl);
